@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  pihole:
+    container_name: SageCreek-Pi_Hole
+    image: pihole/pihole:latest
+    hostname: pihole
+    domainname: lan
+    mac_address: d0:ca:ab:cd:ef:01
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 443/tcp
+      - 53/tcp
+      - 53/udp
+      - 67/udp
+      - 80/tcp
+    environment:
+      ServerIP: 192.168.110.201
+      WEBPASSWORD: "rhdi5!QUGA@"
+      VIRTUAL_HOST: pihole.lan
+      DNS1: 8.8.8.8
+      DNS2: 8.8.4.4
+    volumes:
+      - /volume1/docker/dns/volume:/etc/pihole:rw
+      - /volume1/docker/dns/config/hosts:/etc/hosts:ro
+      - /volume1/docker/dns/config/resolv.conf:/etc/resolv.conf:ro
+      - /volume1/docker/dns/config/dnsmasq.conf:/etc/dnsmasq.d/02-network.conf:ro
+    restart: always

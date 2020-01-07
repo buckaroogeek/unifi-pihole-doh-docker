@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  pihole:
+    extends:
+      service: pihole
+      file: pihole/docker-compose.yaml
+    networks:
+      home:
+        ipv4_address: 192.168.123.201
+
+networks:
+  home:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.110.0/24
+          gateway: 192.168.110.1
+          ip_range: 192.168.110.192/26
