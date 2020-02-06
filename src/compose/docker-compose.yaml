@@ -51,6 +51,64 @@ services:
       - 5000/udp
     volumes:
       - /volume1/docker/registry:/var/lib/registry
+  mongo:
+    image: mongo:3.4
+    container_name: SageCreek-Mongo
+    mac_address: d0:ca:ab:cd:ef:ab
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.215
+    restart: always
+    volumes:
+      - /volume1/docker/mongo/db:/data/db
+  unifi:
+    image: "jacobalberty/unifi:-latest"
+    container_name: SageCreek-Unifi-Controller
+    hostname: unifi2
+    domainname: lan
+    mac_address: d0:ca:ab:cd:ef:ac
+    depends_on:
+      - mongo
+    init: true
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.216
+    restart: always
+    volumes:
+      - /volume1/docker/unifi/data:/unifi/data
+      - /volume1/docker/unifi/log:/unifi/log
+      - /volume1/docker/unifi/cert:/unifi/cert
+      - /volume1/docker/unifi/init.d:/unifi/init.d
+    environment:
+      DB_URI: mongodb://mongo/unifi
+      STATDB_URI: mongodb://mongo/unifi_stat
+      DB_NAME: unifi
+      TZ: America/Pacific
+      UNIFI_HTTP_PORT: 80
+      UNIFI_HTTPS_PORT: 443
+      #RUNAS_UID0: false
+      #UNIFI_UID: 1029
+      #UNIFI_GID: 65537
+    ports:
+      - "1900/udp" # L2 discovery
+      - "3478/udp" # STUN
+      - "6789/tcp" # Speed test
+      - "8080/tcp" # Device/ controller comm.
+      - "8443/tcp" # Controller GUI/API as seen in a web browser
+      - "8880/tcp" # HTTP portal redirection
+      - "8843/tcp" # HTTPS portal redirection
+      - "10001/udp" # AP discovery
+      - "27117/tcp" # DB communications
+  logs:
+    image: bash
+    container_name: SageCreek-Unifi-Logs
+    mac_address: d0:ca:ab:cd:ef:ad
+    depends_on:
+      - unifi
+    command: bash -c 'tail -F /unifi/log/*.log'
+    restart: always
+    volumes:
+      - /volume1/docker/unifi/log:/unifi/log
 
 networks:
   macvlan1:
