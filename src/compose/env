@@ -1,0 +1,13 @@
+# Environment variables for synology docker-compose file
+# BG Smith - 24 Feb 2020
+
+# General variables
+TZ = America/Pacific #timezone
+DOMAIN = lan         #domain name for network
+
+
+# Pi-Hole variables
+PIHOLE-WEBPASSWORD = quga5!RHDI@
+PIHOLE-IP = 192.168.110.203
+PIHOLE-HOSTNAME = pihole
+
