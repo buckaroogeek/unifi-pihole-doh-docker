@@ -5,14 +5,19 @@
 # Macvlan provides unique IP addresses for each container.
 #
 
-version: '2.2'
+# ipam configuration options used in the macvlan below
+# e.g. aux_addresses are not available in docker-compose
+# version 3.x at this time so this compose file needs to use
+# the 2.x format.
+
+version: '2.4'
 
 services:
   pihole:     #Pi Hole dns server for local network
     container_name: SageCreek-Pi-Hole
     image: pihole/pihole:latest
     hostname: pihole
-    domainname: lan
+    domainname: lan             # <-- Update
     mac_address: d0:ca:ab:cd:ef:01
     cap_add:
       - NET_ADMIN
@@ -20,8 +25,8 @@ services:
       macvlan1:
         ipv4_address: 192.168.110.201   # <-- Update
     volumes:
-      - /volume1/docker/pihole/pihole-configs:/etc/pihole/:rw
-      - /volume1/docker/pihole/dnsmasq.d-configs:/etc/dnsmasq.d/:rw
+      - '/volume1/docker/pihole/pihole-configs:/etc/pihole/'
+      - '/volume1/docker/pihole/dnsmasq.d-configs:/etc/dnsmasq.d/'
     dns:
       - 127.0.0.1
       - 8.8.8.8
@@ -29,38 +34,35 @@ services:
       - 443/tcp
       - 53/tcp
       - 53/udp
-      # - 67/udp  # uncomment to use pi-hole for dhcp
+      - 67/udp
       - 80/tcp
-      - 22/tcp
     environment:
       ServerIP: 192.168.110.201 # <-- Update (match ipv4_address)
       VIRTUAL_HOST: pihole.lan  # <-- Update (match hostname + domainname)
-      WEBPASSWORD: "quga5RHDI@" # <-- Add password (if required)
+      WEBPASSWORD: "strongPassword" # <-- Add password (if required)
     restart: unless-stopped
-    #  dnscrypt:
-      #    container_name: SageCreek-DNSCrypt
-      #    image: jedisct1/dnscrypt-server:latest
-      #    command: init -N dns.lan -E '192.168.110.203:443'
-      #    mac_address: d0:ca:ab:cd:ef:03
-      #    hostname: dns
-      #    domainname: lan
-      #    init: true
-      #    ports:
-        #      - 443/tcp
-        #      - 443/udp
-        #    networks:
-          #      macvlan1:
-            #        ipv4_address: 192.168.110.203
-            #    ulimits:
-              #      nofile:
-                #        soft: 90000
-        #        hard: 90000
-        #    volumes:
-          #      - /volume1/docker/dnscrypt/keys:/opt/encrypted-dns/etc/keys:rw
-          #    restart: unless-stopped
+  doh-client:     # DOH Client for local network
+    container_name: SageCreek-DOH-Client
+    image: buckaroogeek/doh-client:latest
+    hostname: dohclient
+    domainname: lan
+    mac_address: d0:ca:ab:cd:ef:03
+    cap_add:
+      - NET_ADMIN
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.203
+    command: ["-conf=/etc/dns-over-https/doh-client.conf"]
+    volumes:
+      - /volume1/docker/dohclient:/etc/dns-over-https
+    ports:
+      - 53/tcp
+      - 53/udp
+      - 5380/tcp
+    restart: unless-stopped
   registry:      # Docker registry server for local development
     container_name: SageCreek-Registry
-    restart: unless-stopped
+    restart: always
     image: registry:2
     hostname: reg
     domainname: lan
@@ -69,10 +71,15 @@ services:
       macvlan1:
         ipv4_address: 192.168.110.210
     ports:
-      - 5000/tcp
-      - 5000/udp
+      - 443/tcp
+      - 443/udp
     volumes:
       - /volume1/docker/registry:/var/lib/registry
+      - /volume1/docker/registry/certs:/certs
+    environment:
+      REGISTRY_HTTP_ADDR: 0.0.0.0:443
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
   mongo:
     image: mongo:3.4
     container_name: SageCreek-Mongo
@@ -80,11 +87,11 @@ services:
     networks:
       macvlan1:
         ipv4_address: 192.168.110.215
-    restart: unless-stopped
+    restart: always
     volumes:
       - /volume1/docker/mongo/db:/data/db
   unifi:
-    image: jacobalberty/unifi:latest
+    image: "jacobalberty/unifi:latest"
     container_name: SageCreek-Unifi-Controller
     hostname: unifi2
     domainname: lan
@@ -95,7 +102,7 @@ services:
     networks:
       macvlan1:
         ipv4_address: 192.168.110.216
-    restart: unless-stopped
+    restart: always
     volumes:
       - /volume1/docker/unifi/data:/unifi/data
       - /volume1/docker/unifi/log:/unifi/log
@@ -125,10 +132,13 @@ services:
     image: bash
     container_name: SageCreek-Unifi-Logs
     mac_address: d0:ca:ab:cd:ef:ad
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.217
     depends_on:
       - unifi
     command: bash -c 'tail -F /unifi/log/*.log'
-    restart: unless-stopped
+    restart: always
     volumes:
       - /volume1/docker/unifi/log:/unifi/log
 
