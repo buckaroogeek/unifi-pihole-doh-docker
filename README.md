@@ -1,0 +1,59 @@
+Yet Another Unifi Controller, Pi-Hole, and DNS-Over-HTTPS Setup using Docker Compose
+============================================================================
+
+## Description
+A docker-compose yaml file to manage a Unifi Controller service, a Pi-Hole service, and a DNS-Over-HTTPS client service for my home network. Also included is a supporting script for the docker host. Additional services may be included for development/testing (e.g. a local docker registry) or to support one of the other services (e.g. logs and mongo for the Unifi Controller).
+
+Version 2 of the Docker compose format is used because macvlan networks are not supported in version 3 as a network configuration at this time. If compose format version 3 is required then the macvlan can be established via an external docker command.
+
+In addition, a separate bash script is provided that enables the docker host to have a direct network connection to the containers on the docker macvlan. See the technical notes below.
+
+## Target
+A home or small office network that uses [Ubiquiti](https://www.ubnt.com) Unifi equipment and would benefit from a [Pi-Hole](https://www.pi-hole.net) DNS server and DNS-Over-HTTPS for encryption of DNS queries to upstream DNS provider(s).
+
+## Services
+Service           | Notes
+----------------  | ---------------------------------------------
+Unifi Controller  | Web based Unifi network management application
+Pi-Hole           | Blocking/filtering/caching DNS server
+DOH Client        | Uses HTTPS to send DNS queries to upstream
+Mongo             | Database used by Unifi Controller
+Logs              | Log display for Unifi Controller
+Registry          | Private instance of a Docker registry for development
+
+The Unifi Controller is the web-based management application for Unifi network equipment. I use Jacob Alberty's [docker-based](https://github.com/jacobalberty/unifi-docker) version of the software. Please note that Ubiquiti does not officially support this software running in a Docker container at this time (April 2020). The Controller is used to manage all aspects of a Unifi network. The mongo and log services both support the Unifi Controller.
+
+The [Pi-Hole](https://www.pi-hole.net) is the upstream DNS server to all networks (VLANs) defined in the Controller. Pi-Hole provides network level blocking of ads found on web pages, in mobile apps, and smart devices commonly found on home or office networks. The Pi-Hole also provides DNS caching for improved performance.
+
+The [DNS-Over-HTTPS (DOH) client](https://hub.docker.com/r/buckaroogeek/doh-client) is the upstream DNS provider to the Pi-Hole. The DOH client receives DNS queries from the Pi-Hole using the standard plain text DNS protocol and forwards them to an upstream DNS server on the internet using an encrypted protocol (https). Google and CloudFlare are two well-known provides of DNS over HTTPS on the internet. The primary benefit of DOH is that by using HTTPS for DNS, none of the internet service providers between the home or office network and the upstream DOH server can see and monitor the DNS traffic.
+
+The Registry service is extraneous to the Unifi Controller and supporting services. I use this for development purposes and should be deleted if not needed.
+
+## Docker Host
+[Synology](https://www.synology.com) Network Attached Storage (NAS) device. Specifically a DS218+ (as I write this in April 2020). The DS218+ is used, in my case, as the docker host but any computer running docker on the same network should suffice. In principle, these services could be deployed to a computer that is external to the home network (e.g. Amazon cloud). I have not done so, and caution anyone using this compose file in the cloud to thoroughly investigate and mitigate any possible security ramifications.
+
+## Network Topology
+All unifi equipment, including a gateway (USG), switches (three 8 port switches), access points (five access points in 3 buildings), the wireless bridges between buildings (three [Ubiquiti AirMax Nanobeams](https://www.ui.com/airmax/nanobeam-ac-gen2/)), the Controller, and the Synology (docker host) are all on the same subnet - for example all using 192.168.110.x IP addresses. Docker is configured with a docker macvlan so that each container (controller, pi-hole, doh client) also has a unique IP address on the same subnet. See the technical notes below and the docker-compose.yaml file for more details on the macvlan. 
+
+The docker macvlan (macvlan1) is configured in the docker-compose.yaml file to include this IP range: 192.168.110.192/26. See the [CIDR Subnet Calculator](https://www.xarg.org/tools/subnet-calculator/?q=192.168.110.192%2F26) for more details. Please be aware that the IP addresses in this macvlan subnet overlap with the IP address configuration for all other network equipment on local area network. I compensate for this overlap, which can cause a lot of problems if not accounted for, by only using hard coded IP addresses for all devices on this subnet (192.168.110.1/24). All other devices such as personal computers, smart phones, Tivo, etc, on the home network use another VLAN (actually multiple VLANs for family devices and computers, guest access, IOT devices that contact the internet, and a NoT VLAN for devices that only need access to a local home automation service).
+
+## Usage and Technical Notes
+
+Docker-compose is used to manage all containers on the docker host. On the Synology, this is done from the command line and not from the Docker web GUI. [Docker-compose](https://docs.docker.com/compose/reference/overview/) has complete control over all images and containers. Individual containers can be managed (start, stop, inspect, update) as well as all containers at the same time./
+
+Star Brilliant (m13253@hotmail.com) has published a go language based DOH (dns over https) client and server at GitHub (https://github.com/m13253/dns-over-https). I thank Star Brilliant and colleagues for their work creating and publishing this code base.
+
+As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the docker-compose yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts is beyond the scope of this repository and these notes.
+
+## Credit
+DOH Client original source code: https://github.com/m13253/dns-over-https
+
+DOH Client docker repository: https://hub.docker.com/r/buckaroogeek/doh-client
+
+Jacob Alberty's unifi docker repository: https://github.com/jacobalberty/unifi-docker
+
+Pi-Hole Docker code: https://github.com/pi-hole/docker-pi-hole
+
+Tony Lawrence's inspiring write up on running a Pi-Hole with Docker on a Synology NAS: http://tonylawrence.com/posts/unix/synology/free-your-synology-ports/
+
+
