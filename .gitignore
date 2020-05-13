@@ -1,6 +1,7 @@
 *.crt
 *.key
 *.swp
+*.old
 .env
 .DS_Store
 .idea

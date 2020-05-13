@@ -41,9 +41,27 @@ The docker macvlan (macvlan1) is configured in the docker-compose.yaml file to i
 
 Docker-compose is used to manage all containers on the docker host. On the Synology, this is done from the command line and not from the Docker web GUI. [Docker-compose](https://docs.docker.com/compose/reference/overview/) has complete control over all images and containers. Individual containers can be managed (start, stop, inspect, update) as well as all containers at the same time./
 
+The .env file in the repository is not used at this time. 
+
+See the [Pi-Hole README.md](https://github.com/pi-hole/docker-pi-hole) for additional variables and configuration options.
+
+See the [DOH Client Docker Hub page](https://hub.docker.com/r/buckaroogeek/doh-client) for additional configuration options for the DOH client. See the configuration note below to make any needed changes to the doh-client.conf file and where to place it. By default the DOH Client will respond to dig and other DNS tools from devices on the same network. This makes testing easier. The configuration file can be used to lock down the DOH client so that it is only listening to the Pi-Hole server.
+
+See Jacob's [Unifi Docker README.md](https://github.com/jacobalberty/unifi-docker) for additional Unifi Controller options. 
+
 Several containers use external volumes to preserve information or data across container restarts. Before deploying this docker-compose.yaml file, use the Synology File Station web interface to create each mount point. For the Pi-Hole service create two subdirectories at /volume1/docker/pihole/pihole-configs and /volume1/docker/pihole/dnsmasq.d-configs. The DOH client has one mount point at /volume1/docker/dohclient and so forth for all services defined in the compose file. These must exist before starting the containers.
 
+The PiHole docker container uses the WEBPASSWORD environment variable to define the admin password for the web interface. Set this to your own value.
+
 As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the docker-compose yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts is beyond the scope of this repository and these notes.
+
+## Configuration
+
+Before starting the the DOH Client, download the example doh-client.conf file from this repository and edit as needed. Select which upstream DOH servers to use. By default, both Google and CloudFlare servers are enabled along with a Random selection protocol. Use the Synology web inteface to upload this configuration file to the correct location (matching the volume defined for the DOH Client service).
+
+Once the services are running, the Unifi Controller will need to be configured to use the Pi-Hole DNS server for each appropriate network. Settings, Network, Edit Network, then select Manual for DHCP Name Server (mislabeled this should be Domain Name Server) and set the Pi-Hole IP for DNS 1. Set an alternative DNS server (e.g. the Unifi Gateway or other suitable IP) for DNS server 2 and 3. If the client device cannot connect to the Pi-Hole, DNS will still function.
+
+In the Pi-Hole web interface navigate to Settings, DNS tab and check Custom 1(IPV4). Set the IP address for the DOH Client docker container here and the port (e.g. 192.168.110.203#53).
 
 ## Credit
 DOH Client original source code: https://github.com/m13253/dns-over-https
