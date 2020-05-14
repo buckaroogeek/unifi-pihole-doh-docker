@@ -11,6 +11,8 @@ A separate bash script is provided that enables the docker host to have a direct
 ## Target
 A home or small office network that uses [Ubiquiti](https://www.ubnt.com) Unifi equipment and would benefit from a [Pi-Hole](https://www.pi-hole.net) DNS server and DNS-Over-HTTPS for encryption of DNS queries to upstream DNS provider(s).
 
+Important Note: this configuration is designed for a home network that is double NATed by my ISP and behind a couple of firewalls I manage. It can be adapted to other environments but will need a thorough understanding of the security implications when doing so.
+
 ## Services
 Service           | Notes
 ----------------  | ---------------------------------------------
