@@ -67,7 +67,7 @@ Once the services are running, the Unifi Controller will need to be configured t
 
 In the Pi-Hole web interface navigate to Settings, DNS tab and check Custom 1(IPV4). Set the IP address for the DOH Client docker container here and the port (e.g. 192.168.110.203#53).
 
-Once the containers are running with the macvlan, you can use the shim.sh script as root to create a network path from the docker host IP (synology IP in my case) to the container IPs. Making this configuration persistent is beyond the scope of this readme (Synology does not make it super easy).
+Once the containers are running with the macvlan, you can use the shim.sh script as root on the docker host machine (Synology in my case) to create a network path from the docker host IP (synology IP in my case) to the container IPs. Making this configuration persistent is beyond the scope of this readme (Synology does not make it super easy).
 
 ## Credit
 DOH Client original source code: https://github.com/m13253/dns-over-https
