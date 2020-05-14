@@ -80,6 +80,6 @@ Pi-Hole Docker code: https://github.com/pi-hole/docker-pi-hole
 
 Tony Lawrence's inspiring write up on running a Pi-Hole with Docker on a Synology NAS: http://tonylawrence.com/posts/unix/synology/free-your-synology-ports/
 
-Chris Shewood at Crosstalk Solutions and his excellent You Tube series for Ubiquiti equipment and Synology configuration - https://www.youtube.com/channel/UCVS6ejD9NLZvjsvhcbiDzjw
+Chris Sherwood at Crosstalk Solutions and his excellent You Tube series for Ubiquiti equipment and Synology configuration - https://www.youtube.com/channel/UCVS6ejD9NLZvjsvhcbiDzjw
 
 Willie Howe for his excellent YouTube Channel covering Ubiquiti and Synology - https://www.youtube.com/channel/UCD-QkofF-bFBAcI83U8ZZeg
