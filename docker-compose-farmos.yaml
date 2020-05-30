@@ -15,7 +15,7 @@ version: '2.4'
 services:
   mariadb:
     container_name: SageCreek-MariaDB
-    image: mariadb:latestmariadb
+    image: mariadb:latest
     hostname: mariadb
     domainname: lan             # <-- Update
     mac_address: d0:ca:ab:cd:ef:06
