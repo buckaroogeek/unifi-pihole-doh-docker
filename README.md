@@ -8,6 +8,12 @@ Version 2 of the Docker compose format is used because macvlan networks are not 
 
 A separate bash script is provided that enables the docker host to have a direct network connection to the containers on the docker macvlan. See the technical notes below. See ./scripts/shim.sh for the script.
 
+## Update Notes
+Date        | Notes
+----------  | -------------------------------
+6 June      | Added this update comment section. Added a command line section.
+31 May      | Added docker-compose-farmos.yaml - docker configuration for farmos and database. FarmOS (farmos.org) is an open source farm management application that I am exploring for my small hay business.
+
 ## Target
 A home or small office network that uses [Ubiquiti](https://www.ubnt.com) Unifi equipment and would benefit from a [Pi-Hole](https://www.pi-hole.net) DNS server and DNS-Over-HTTPS for encryption of DNS queries to upstream DNS provider(s).
 
@@ -58,6 +64,30 @@ Several containers use external volumes to preserve information or data across c
 The PiHole docker container uses the WEBPASSWORD environment variable to define the admin password for the web interface. Set this to your own value.
 
 As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the docker-compose yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts is beyond the scope of this repository and these notes.
+
+## Execution
+
+Docker Compose is a command line executable available for most linux systems uncluding the Synology. There are many references available - I find the original Docker documentation very approachable and useful: https://docs.docker.com/compose/.
+
+Start all services in the default docker-compose.yaml file
+```bash
+sudo docker-compose up
+```
+
+Start all services in the default docker-compose.yaml file and detach.
+```bash
+sudo docker-compose up -d
+```
+
+Start the Pi-Hole service in the default docker-compose.yaml file and detach.
+```bash
+sudo docker-compose up -d pihole
+```
+
+Start all services in both docker-compose.yaml files and detach.
+```bash
+sudo docker-compose up -d -f docker-compose.yaml -f docker-compose-farmos.yaml
+```
 
 ## Configuration
 
