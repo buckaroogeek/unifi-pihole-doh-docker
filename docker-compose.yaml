@@ -1,3 +1,4 @@
+---
 # Derived from example provided by Tony Lawrence - see
 # http://tonylawrence.com/posts/unix/synology/free-your-synology-ports/
 #
@@ -13,7 +14,7 @@
 version: '2.4'
 
 services:
-  pihole:     #Pi Hole dns server for local network
+  pihole:     # Pi Hole dns server for local network
     container_name: SageCreek-Pi-Hole
     image: pihole/pihole:latest
     hostname: pihole
@@ -23,7 +24,7 @@ services:
       - NET_ADMIN
     networks:
       macvlan1:
-        ipv4_address: 192.168.110.201   # <-- Update
+        ipv4_address: 192.168.110.201   #  <-- Update
     volumes:
       - '/volume1/docker/pihole/pihole-configs:/etc/pihole/'
       - '/volume1/docker/pihole/dnsmasq.d-configs:/etc/dnsmasq.d/'
@@ -37,9 +38,9 @@ services:
       - 67/udp
       - 80/tcp
     environment:
-      ServerIP: 192.168.110.201 # <-- Update (match ipv4_address)
-      VIRTUAL_HOST: pihole.lan  # <-- Update (match hostname + domainname)
-      WEBPASSWORD: "strongPassword" # <-- Add password (if required)
+      ServerIP: 192.168.110.201       # <-- match ipv4_address
+      VIRTUAL_HOST: pihole.lan        # <-- match hostname + domainname
+      WEBPASSWORD: "strongPassword"   # <-- Add password
     restart: unless-stopped
   doh-client:     # DOH Client for local network
     container_name: SageCreek-DOH-Client
@@ -81,13 +82,13 @@ services:
       REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
       REGISTRY_HTTP_TLS_KEY: /certs/domain.key
   mongo:
-    image: mongo:3.4
+    image: mongo:3.6
     container_name: SageCreek-Mongo
     mac_address: d0:ca:ab:cd:ef:ab
     networks:
       macvlan1:
         ipv4_address: 192.168.110.215
-    restart: always
+    restart: unless-stopped
     volumes:
       - /volume1/docker/mongo/db:/data/db
   unifi:
@@ -115,19 +116,19 @@ services:
       TZ: America/Pacific
       UNIFI_HTTP_PORT: 80
       UNIFI_HTTPS_PORT: 443
-      #RUNAS_UID0: false
-      #UNIFI_UID: 1029
-      #UNIFI_GID: 65537
+      # RUNAS_UID0: false
+      # UNIFI_UID: 1029
+      # UNIFI_GID: 65537
     ports:
-      - "1900/udp" # L2 discovery
-      - "3478/udp" # STUN
-      - "6789/tcp" # Speed test
-      - "80/tcp" # Device/ controller comm.
-      - "443/tcp" # Controller GUI/API as seen in a web browser
-      - "8880/tcp" # HTTP portal redirection
-      - "8843/tcp" # HTTPS portal redirection
-      - "10001/udp" # AP discovery
-      - "27117/tcp" # DB communications
+      - "1900/udp"    # L2 discovery
+      - "3478/udp"    # STUN
+      - "6789/tcp"    # Speed test
+      - "80/tcp"      # Device/ controller comm.
+      - "443/tcp"     # Controller GUI/API as seen in a web browser
+      - "8880/tcp"    # HTTP portal redirection
+      - "8843/tcp"    # HTTPS portal redirection
+      - "10001/udp"   # AP discovery
+      - "27117/tcp"   # DB communications
   logs:
     image: bash
     container_name: SageCreek-Unifi-Logs
@@ -154,4 +155,3 @@ networks:
           ip_range: 192.168.110.192/26        # <-- Update
           aux_addresses:
             -host: 192.168.110.193
-

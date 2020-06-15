@@ -1,3 +1,4 @@
+---
 #
 # FarmOS docker-compose
 #
@@ -21,7 +22,7 @@ services:
     mac_address: d0:ca:ab:cd:ef:06
     networks:
       macvlan1:
-        ipv4_address: 192.168.110.206   # <-- Update
+        ipv4_address: 192.168.110.206   #  <-- Update
     volumes:
       - /volume1/docker/farmos/db:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
