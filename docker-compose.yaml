@@ -91,6 +91,7 @@ services:
     restart: unless-stopped
     volumes:
       - /volume1/docker/mongo/db:/data/db
+      - /volume1/docker/mongo/dbcfg:/data/configdb
   unifi:
     image: "jacobalberty/unifi:latest"
     container_name: SageCreek-Unifi-Controller
@@ -103,12 +104,14 @@ services:
     networks:
       macvlan1:
         ipv4_address: 192.168.110.216
-    restart: always
+    restart: unless-stopped
     volumes:
+      - /volume1/docker/unifi:/unifi
       - /volume1/docker/unifi/data:/unifi/data
       - /volume1/docker/unifi/log:/unifi/log
       - /volume1/docker/unifi/cert:/unifi/cert
       - /volume1/docker/unifi/init.d:/unifi/init.d
+      - /volume1/docker/unifi/run:/var/run/unifi
     environment:
       DB_URI: mongodb://mongo/unifi
       STATDB_URI: mongodb://mongo/unifi_stat
