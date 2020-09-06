@@ -5,6 +5,7 @@
 .env
 .DS_Store
 .idea
+notes
 
 certs/
 temp/
