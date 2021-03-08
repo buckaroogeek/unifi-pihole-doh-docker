@@ -11,6 +11,7 @@ A separate bash script is provided that enables the docker host to have a direct
 ## Update Notes
 Date        | Notes
 ----------  | -------------------------------
+8 March 2021| DOH-Client tag moved from latest to current release (2.2.10). The rpmcache service is still a work in progress and will not work correctly.
 6 June      | Added this update comment section. Added a command line section.
 31 May      | Added docker-compose-farmos.yaml - docker configuration for farmos and database. FarmOS (farmos.org) is an open source farm management application that I am exploring for my small hay business.
 
