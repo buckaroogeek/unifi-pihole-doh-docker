@@ -40,7 +40,7 @@ services:
     environment:
       ServerIP: 192.168.110.201       # <-- match ipv4_address
       VIRTUAL_HOST: pihole.lan        # <-- match hostname + domainname
-      WEBPASSWORD: "quga5RHDI@"   # <-- Add password
+      WEBPASSWORD: "xxxxx"   # <-- Add password
     restart: unless-stopped
   doh-client:     # DOH Client for local network
     container_name: SageCreek-DOH-Client
@@ -93,7 +93,7 @@ services:
       - /volume1/docker/mongo/db:/data/db
       - /volume1/docker/mongo/dbcfg:/data/configdb
   unifi:
-    image: "jacobalberty/unifi:stable-6"
+    image: "jacobalberty/unifi:v6"
     container_name: SageCreek-Unifi-Controller
     hostname: unifi2
     domainname: lan
@@ -106,10 +106,12 @@ services:
         ipv4_address: 192.168.110.216
     restart: unless-stopped
     volumes:
-      - /volume1/docker/unifi2/data:/unifi/data
-      - /volume1/docker/unifi2/log:/unifi/log
-      - /volume1/docker/unifi2/cert:/unifi/cert
-      - /volume1/docker/unifi2/init.d:/unifi/init.d
+      - /etc/localtime:/etc/localtime:ro
+      - /volume1/docker/unifi2:/unifi
+      #      - /volume1/docker/unifi2/data:/unifi/data
+      #      - /volume1/docker/unifi2/log:/unifi/log
+      #      - /volume1/docker/unifi2/cert:/unifi/cert
+      #      - /volume1/docker/unifi2/init.d:/unifi/init.d
       - /volume1/docker/unifi2/run:/var/run/unifi
     environment:
       DB_URI: mongodb://mongo/unifi
@@ -144,24 +146,6 @@ services:
     restart: always
     volumes:
       - /volume1/docker/unifi2/log:/unifi/log
-  rpmcache:
-    image: reg.lan/cache:latest
-    container_name: SageCreek-RPM-Cache
-    TZ: America/Los_Angeles
-    hostname: cache
-    domainname: lan
-    mac_address: d0:ca:ab:cd:cf:ac
-    networks:
-      macvlan1:
-        ipv4_address: 192.168.110.212
-    ports:
-      - "80/tcp"
-      - "80/udp"
-    restart: unless-stopped
-    volumes:
-      #      - /volume1/docker/cache/conf:/etc/squid
-      - /volume1/docker/cache/log:/var/log/squid
-      - /volume1/docker/cache/spool:/var/spool/squid
 
 networks:
   macvlan1:
