@@ -11,6 +11,7 @@ A separate bash script is provided that enables the docker host to have a direct
 ## Update Notes
 Date        | Notes
 ----------  | -------------------------------
+8 Dec 2022  | Synology DSM 7 uses systemd. The docker macvlan post by Ivan Smirnov (see below) outlines a simple integration of the shim.sh script with systemd which helps to automate network configuration for macvlan containers following network restarts.
 8 March 2021| DOH-Client tag moved from latest to current release (2.2.10). The rpmcache service is still a work in progress and will not work correctly.
 6 June      | Added this update comment section. Added a command line section.
 31 May      | Added docker-compose-farmos.yaml - docker configuration for farmos and database. FarmOS (farmos.org) is an open source farm management application that I am exploring for my small hay business.
@@ -64,7 +65,18 @@ Several containers use external volumes to preserve information or data across c
 
 The PiHole docker container uses the WEBPASSWORD environment variable to define the admin password for the web interface. Set this to your own value.
 
-As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the docker-compose yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts is beyond the scope of this repository and these notes.
+As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the docker-compose yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts can vary based on the docker host OS. For a Synology NAS with DSM 7 or newer, the section on Persisting the macvlan network settings from https://blog.ivansmirnov.name/set-up-pihole-using-docker-macvlan-network/ is helpful.
+
+```
+sudo cp scripts/shim.sh /usr/local/bin
+sudo chmod +x /usr/local/bin/shim.sh
+sudo cp macvlan-shim.service /etc/systemd/system
+sudo chmod go+r /etc/systemd/system/macvlan-shim.service
+sudo systemctl start macvlan-shim.service
+```
+
+A the next network restart or system boot, the shim.sh script will execute and enable local area network connection to containers on the docker macvlan.
+
 
 ## Execution
 
@@ -114,3 +126,5 @@ Tony Lawrence's inspiring write up on running a Pi-Hole with Docker on a Synolog
 Chris Sherwood at Crosstalk Solutions and his excellent You Tube series for Ubiquiti equipment and Synology configuration - https://www.youtube.com/channel/UCVS6ejD9NLZvjsvhcbiDzjw
 
 Willie Howe for his excellent YouTube Channel covering Ubiquiti and Synology - https://www.youtube.com/channel/UCD-QkofF-bFBAcI83U8ZZeg
+
+Ivan Smirnov for an excellent recent blog post on setting up a docker macvlan for a pihole container: https://blog.ivansmirnov.name/set-up-pihole-using-docker-macvlan-network/
