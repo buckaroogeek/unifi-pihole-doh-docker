@@ -1,0 +1,9 @@
+[Unit]
+Description=Configure macvlan shim after network starts
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/shim.sh
+
+[Install]
+WantedBy=default.target
