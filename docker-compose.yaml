@@ -41,6 +41,7 @@ services:
       ServerIP: 192.168.110.201       # <-- match ipv4_address
       VIRTUAL_HOST: pihole.lan        # <-- match hostname + domainname
       WEBPASSWORD: "xxxxx"   # <-- Add password
+      TZ: 'America/Los_Angeles'
     restart: unless-stopped
   doh-client:     # DOH Client for local network
     container_name: SageCreek-DOH-Client
