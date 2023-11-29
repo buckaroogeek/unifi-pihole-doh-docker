@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
   doh-client:     # DOH Client for local network
     container_name: SageCreek-DOH-Client
-    image: buckaroogeek/doh-client:2.2.12
+    image: buckaroogeek/doh-client:2.2.16
     hostname: dohclient
     domainname: lan
     mac_address: d0:ca:ab:cd:ef:03
