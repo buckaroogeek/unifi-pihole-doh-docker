@@ -1,0 +1,39 @@
+---
+#
+# Revised to follow the docker compose v2 file specification
+# (not to be confused with compose v1 and Version 1, Version2,
+# or Version 3 file formats).
+
+# Original notes below
+# Derived from example provided by Tony Lawrence - see
+# http://tonylawrence.com/posts/unix/synology/free-your-synology-ports/
+#
+# Extended to include multiple services using a separate macvlan
+# Macvlan provides unique IP addresses for each container.
+#
+# ipam configuration options used in the macvlan below
+# e.g. aux_addresses are not available in docker-compose
+# version 3.x at this time so this compose file needs to use
+# the 2.x format.
+
+name: lan_services
+
+include:
+  - ./services/registry.yaml
+  - ./services/pihole.yaml
+  - ./services/unifi.yaml
+networks:
+  macvlan1:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.110.0/24
+          gateway: 192.168.110.1
+          ip_range: 192.168.110.192/26
+          aux_addresses:
+            -host: 192.168.110.193
+  unifibridge1:
+    driver: bridge
+...

@@ -1,0 +1,55 @@
+---
+# pihole and doh-client dns services
+#
+services:
+  pihole:     # Pi Hole dns server for local network
+    container_name: Pi-Hole
+    image: pihole/pihole:latest
+    hostname: pihole
+    domainname: lan             # <-- Update
+    mac_address: d0:ca:ab:cd:ef:01
+    depends_on:
+      - doh-client
+    cap_add:
+      - NET_ADMIN
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.201   #  <-- Update
+    volumes:
+      - '/volume1/docker/pihole/pihole-configs:/etc/pihole/'
+      - '/volume1/docker/pihole/dnsmasq.d-configs:/etc/dnsmasq.d/'
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+    ports:
+      - 443/tcp
+      - 53/tcp
+      - 53/udp
+      - 67/udp
+      - 80/tcp
+    environment:
+      ServerIP: 192.168.110.201
+      VIRTUAL_HOST: pihole.lan
+      WEBPASSWORD: "xxxxx"   # <-- Add password
+      TZ: 'America/Los_Angeles'
+    restart: unless-stopped
+  doh-client:     # DOH Client for local network
+    container_name: DOH-Client
+    image: buckaroogeek/doh-client:2.2.16
+    hostname: dohclient
+    domainname: lan
+    mac_address: d0:ca:ab:cd:ef:03
+    cap_add:
+      - NET_ADMIN
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.203
+    command: ["-conf=/etc/dns-over-https/doh-client.conf"]
+    volumes:
+      - /volume1/docker/dohclient:/etc/dns-over-https
+    ports:
+      - 53/tcp
+      - 53/udp
+      - 5380/tcp
+    restart: unless-stopped
+...
