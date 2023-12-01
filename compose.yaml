@@ -18,6 +18,12 @@
 
 name: lan_services
 
+# include attribute available in compose 2.20 and newer
+# include:
+#  - ./services/registry.yaml
+#  - ./services/pihole.yaml
+#  - ./services/unifi.yaml
+
 services:
   registry:      # Docker registry server for local development
     container_name: Registry
