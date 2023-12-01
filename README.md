@@ -11,6 +11,7 @@ A separate bash script is provided that enables the docker host to have a direct
 ## Update Notes
 Date        | Notes
 ----------  | -------------------------------
+1 Dec 2023  | Synology DSM 7.2 uses docker-compose v2 (although not as 'docker compose'). Added compose.yaml to replace docker-compose.yaml. Very similar with addition of unifibridge network to isolate unifi log and unifi mongo containers on a docker bridge network and remove them from the macvlan. Logs and mongo did not need to be visible on lan. Also moved unifi to buckaroogeek as Jacob Alberty has not been online to update his images for quite some time. I hope he is all right.
 8 Dec 2022  | Synology DSM 7 uses systemd. The docker macvlan post by Ivan Smirnov (see below) outlines a simple integration of the shim.sh script with systemd which helps to automate network configuration for macvlan containers following network restarts.
 8 March 2021| DOH-Client tag moved from latest to current release (2.2.10). The rpmcache service is still a work in progress and will not work correctly.
 6 June      | Added this update comment section. Added a command line section.
