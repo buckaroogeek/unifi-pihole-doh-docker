@@ -2,9 +2,11 @@ Yet Another Unifi Controller, Pi-Hole, and DNS-Over-HTTPS Setup using Docker Com
 ============================================================================
 
 ## Description
+1 Dec 2023 update. Added compose.yaml which can replace docker-compose.yaml on systems with Docker Compose V2 (note compose V2 refers to the version of the software and is not the same as compose file format version 2). Compose V2 also supports an ```include``` attribute as of Compose V2.20. However, Synology DSM 7.2 currently provides Compose V2.0.9 so the include attributes are commented out.
+
 A docker-compose yaml file to manage a Unifi Controller service, a Pi-Hole service, and a DNS-Over-HTTPS client service for my home network. Also included is a supporting script for the docker host. Additional services may be included for development/testing (e.g. a local docker registry) or to support one of the other services (e.g. logs and mongo for the Unifi Controller).
 
-Version 2 of the Docker compose format is used because macvlan networks are not supported in version 3 as a network configuration at this time. If compose format version 3 is required then the macvlan can be established via an external docker command.
+In the ```docker-compose.yaml``` file Version 2 of the Docker compose format is used because macvlan networks are not supported in version 3 as a network configuration at this time. If compose format version 3 is required then the macvlan can be established via an external docker command.
 
 A separate bash script is provided that enables the docker host to have a direct network connection to the containers on the docker macvlan. See the technical notes below. See ./scripts/shim.sh for the script.
 
