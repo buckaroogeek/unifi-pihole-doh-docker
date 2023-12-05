@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
   doh-client:     # DOH Client for local network
     container_name: SageCreek-DOH-Client
-    image: buckaroogeek/doh-client:2.2.16
+    image: buckaroogeek/doh-client:2.2.17
     hostname: dohclient
     domainname: lan
     mac_address: d0:ca:ab:cd:ef:03
@@ -94,7 +94,8 @@ services:
       - /volume1/docker/mongo/db:/data/db
       - /volume1/docker/mongo/dbcfg:/data/configdb
   unifi:
-    image: "jacobalberty/unifi:v7"
+    image: "buckaroogeek/unifi:v7"
+    #    image: "jacobalberty/unifi:v7"
     container_name: SageCreek-Unifi-Controller
     hostname: unifi2
     domainname: lan
