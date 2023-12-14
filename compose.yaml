@@ -99,7 +99,7 @@ services:
     restart: unless-stopped
 
   unifi:
-    image: "buckaroogeek/unifi:v7"
+    image: "buckaroogeek/unifi:v8"
     container_name: Unifi-Network-Application
     hostname: unifi2
     domainname: lan

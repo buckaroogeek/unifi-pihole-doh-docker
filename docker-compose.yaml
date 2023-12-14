@@ -94,7 +94,7 @@ services:
       - /volume1/docker/mongo/db:/data/db
       - /volume1/docker/mongo/dbcfg:/data/configdb
   unifi:
-    image: "buckaroogeek/unifi:v7"
+    image: "buckaroogeek/unifi:v8"
     #    image: "jacobalberty/unifi:v7"
     container_name: SageCreek-Unifi-Controller
     hostname: unifi2
