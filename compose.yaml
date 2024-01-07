@@ -31,27 +31,6 @@ services:
     image: registry:2
     hostname: reg
     domainname: lan
-    mac_address: d0:ca:ab:cd:ef:10
-    networks:
-      macvlan1:
-        ipv4_address: 192.168.110.210
-    ports:
-      - 443/tcp
-      - 443/udp
-    volumes:
-      - /volume1/docker/registry:/var/lib/registry
-      - /volume1/docker/registry/certs:/certs
-    environment:
-      REGISTRY_HTTP_ADDR: 0.0.0.0:443
-      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-
-  pihole:     # Pi Hole dns server for local network
-    container_name: Pi-Hole
-    image: pihole/pihole:latest
-    hostname: pihole
-    domainname: lan             # <-- Update
-    mac_address: d0:ca:ab:cd:ef:01
     depends_on:
       - doh-client
     cap_add:
@@ -83,7 +62,6 @@ services:
     image: buckaroogeek/doh-client:2.2.17
     hostname: dohclient
     domainname: lan
-    mac_address: d0:ca:ab:cd:ef:03
     cap_add:
       - NET_ADMIN
     networks:
@@ -103,7 +81,6 @@ services:
     container_name: Unifi-Network-Application
     hostname: unifi2
     domainname: lan
-    mac_address: d0:ca:ab:cd:ef:ac
     depends_on:
       - mongo
     init: true
@@ -147,7 +124,6 @@ services:
   logs:
     image: bash
     container_name: Unifi-Logs
-    mac_address: d0:ca:ab:cd:ef:ad
     networks:
       unifibridge1:
     depends_on:

@@ -8,7 +8,6 @@ services:
     container_name: Unifi-Network-Application
     hostname: unifi2
     domainname: lan
-    mac_address: d0:ca:ab:cd:ef:ac
     depends_on:
       - mongo
     init: true
@@ -50,7 +49,6 @@ services:
   logs:
     image: bash
     container_name: Unifi-Logs
-    mac_address: d0:ca:ab:cd:ef:ad
     networks:
       unifibridge1:
     depends_on:

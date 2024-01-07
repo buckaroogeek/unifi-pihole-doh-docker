@@ -7,7 +7,6 @@ services:
     image: pihole/pihole:latest
     hostname: pihole
     domainname: lan             # <-- Update
-    mac_address: d0:ca:ab:cd:ef:01
     depends_on:
       - doh-client
     cap_add:
@@ -38,7 +37,6 @@ services:
     image: buckaroogeek/doh-client:2.2.17
     hostname: dohclient
     domainname: lan
-    mac_address: d0:ca:ab:cd:ef:03
     cap_add:
       - NET_ADMIN
     networks:

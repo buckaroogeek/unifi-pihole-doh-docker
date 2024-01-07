@@ -8,7 +8,6 @@ services:
     image: registry:2
     hostname: reg
     domainname: lan
-    mac_address: d0:ca:ab:cd:ef:10
     networks:
       macvlan1:
         ipv4_address: 192.168.110.210
