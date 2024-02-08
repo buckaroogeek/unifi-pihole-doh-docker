@@ -27,7 +27,6 @@ name: lan_services
 services:
   registry:      # Docker registry server for local development
     container_name: Registry
-    restart: always
     image: registry:2
     hostname: reg
     domainname: lan
@@ -59,7 +58,7 @@ services:
 
   doh-client:     # DOH Client for local network
     container_name: DOH-Client
-    image: buckaroogeek/doh-client:2.2.17
+    image: buckaroogeek/doh-client:2.2.18
     hostname: dohclient
     domainname: lan
     cap_add:
