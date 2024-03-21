@@ -42,14 +42,6 @@ sudo docker exec -it bce6ba3680a5 bash
 1. ssh to the synology ```ssh syn```. 
 1. Pull mongo 4.4: ```sudo docker pull mongo:4.4```
 1. Stop mongo, unifi, logs: ```sudo docker-compose -f compose.yaml stop unifi mongo logs```
-## Steps
-1. ssh to the synology ```ssh syn```. 
-1. Pull mongo 4.4: ```sudo docker pull mongo:4.4```
-1. Stop mongo, unifi, logs: ```sudo docker-compose -f compose.yaml stop unifi mongo logs```
-## Steps
-1. ssh to the synology ```ssh syn```. 
-1. Pull mongo 4.4: ```sudo docker pull mongo:4.4```
-1. Stop mongo, unifi, logs: ```sudo docker-compose -f compose.yaml stop unifi mongo logs```
 1. back up mongo directory in Synology web ui
 1. Edit compose.yaml to add ```     - /volume1/docker/mongo/dump:/dump``` to mongo definition.
 1. start mongo 3.6 ```sudo docker-compose -f compose.yaml up -d mongo```
