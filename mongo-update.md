@@ -57,8 +57,38 @@ sudo docker exec -it bce6ba3680a5 bash
 3. I then started unifi and logs: ```sudo docker-compose -f compose.yaml up -d unifi logs```. Unifi took a bit to start then went through the device discovery process. There was data in the usage graphs and no obvious errors in the log files or web UI.
 3. I left unifi running overnight with mongo 4.4 to allow time for any problems to show up. Besides, I needed to go feed the horses and take care of other chores around the place.
 
+My Synology is old enough that the CPU does not provide AVX which is needed to deploy Mongo v5.0 or newer.
+
+## Mongo DB Repair
+
+I encountered the situation described on Stack Overflow: https://stackoverflow.com/questions/66508965/mongo-docker-setup-broken-after-reboot-unifi-controller-on-raspberry-pi right after an update to a current version of Unifi Network Controller (v8.2.93). Traffic displayed 0 MB and there were mongo related errors showing up in the log container.
+
+1. Stopped all containers
+2. Backed up mongo db directory in synology web ui
+3. Ran repair via mongo container
+```
+sudo docker run -it -v /volume1/docker/mongo/db:/data/db mongo:4.4 mongod --repair
+```
+1. Open a bash session in mongo container and deleted lock files. Alternatively Ipotentially could have done so via Synology UI.
+```
+sudo docker run -it -v /volume1/docker/mongo/db:/data/db mongo:4.4 bash
+cd /data/db
+rm *lock
+exit
+```
+1. Restarted mongo container. No obvious errors. Mongo container was not restarting every 20 seconds or so.
+2. Restarted unifi and log containers.
+3. Accessed web ui to verify proper functioning.
+4. View log container for errors.
+
 ## Update Notes
 Date        | Notes
 ----------  | -------------------------------
+ 7 Jun 2024      | Add notes on DB repair
 21 Mar 2024      | Initial draft with notes on update from mongodb 3.6 to 4.4.
+
+## References
+1. Mongo Images: https://hub.docker.com/_/mongo
+1. Mongo DB repair steps: https://stackoverflow.com/questions/66508965/mongo-docker-setup-broken-after-reboot-unifi-controller-on-raspberry-pi
+1. Ubiquiti Mongo repair steps: https://help.ui.com/hc/en-us/articles/360006634094-UniFi-Repairing-Database-Issues-on-the-UniFi-Network-Application
 
