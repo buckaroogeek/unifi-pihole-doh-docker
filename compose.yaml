@@ -76,8 +76,10 @@ services:
     environment:
       ServerIP: 192.168.110.201
       VIRTUAL_HOST: pihole.lan
-      WEBPASSWORD: "xxxxx"   # <-- Add password
+      WEBPASSWORD: pihole_webpasswd
       TZ: 'America/Los_Angeles'
+    secrets:
+      - pihole_webpasswd
     restart: unless-stopped
 
   doh-client:     # DOH Client for local network
@@ -156,6 +158,25 @@ services:
     volumes:
       - /volume1/docker/unifi2/log:/unifi/log
 
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:9
+    container_name: Forgejo
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: always
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.212
+    volumes:
+      - /volume1/docker/forgejo:/data
+      - /etc/TZ:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - '3000'
+      - '22'
+
+
 networks:
   macvlan1:
     driver: macvlan
@@ -170,4 +191,8 @@ networks:
             -host: 192.168.110.193
   unifibridge1:
     driver: bridge
+
+secrets:
+  pihole_webpasswd:
+    file: pihole_password.txt
 ...
