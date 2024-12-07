@@ -16,7 +16,7 @@
 # version 3.x at this time so this compose file needs to use
 # the 2.x format.
 
-name: lan_services
+# name: lan_services
 
 # include attribute available in compose 2.20 and newer
 # include:
@@ -40,10 +40,14 @@ services:
     volumes:
       - /volume1/docker/registry:/var/lib/registry
       - /volume1/docker/registry/certs:/certs
+      - /volume1/docker/registry/auth:/auth
     environment:
       REGISTRY_HTTP_ADDR: 0.0.0.0:443
       REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
       REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
 
   pihole:     # Pi Hole dns server for local network
     container_name: Pi-Hole
@@ -78,7 +82,7 @@ services:
 
   doh-client:     # DOH Client for local network
     container_name: DOH-Client
-    image: buckaroogeek/doh-client:2.2.18
+    image: buckaroogeek/doh-client:2.2.19
     hostname: dohclient
     domainname: lan
     cap_add:
@@ -131,7 +135,7 @@ services:
       - "27117/tcp"   # DB communications
 
   mongo:
-    image: mongo:3.6
+    image: mongo:4.4
     container_name: MongoDB
     networks:
       unifibridge1:
