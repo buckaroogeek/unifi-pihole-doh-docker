@@ -27,7 +27,7 @@
 services:
   registry:      # Docker registry server for local development
     container_name: Registry
-    restart: always
+    restart: unless-stopped
     image: registry:2
     hostname: reg
     domainname: lan
@@ -154,7 +154,7 @@ services:
     depends_on:
       - unifi
     command: bash -c 'tail -F /unifi/log/*.log'
-    restart: always
+    restart: unless-stopped
     volumes:
       - /volume1/docker/unifi2/log:/unifi/log
 
@@ -164,7 +164,7 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
-    restart: always
+    restart: unless-stopped
     networks:
       macvlan1:
         ipv4_address: 192.168.110.212
