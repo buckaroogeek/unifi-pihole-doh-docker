@@ -1,4 +1,4 @@
 forge.lan {
-    tls /etc/caddy/certs/syn-cert.pem /etc/caddy/certs/syn-cert-key.pem
-    reverse_proxy forgejo.lan:3000
+	tls /etc/caddy/certs/syn-cert.pem /etc/caddy/certs/syn-cert-key.pem
+	reverse_proxy forgejo.lan:3000
 }
