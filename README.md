@@ -33,6 +33,8 @@ DOH Client        | Uses HTTPS to send DNS queries to upstream
 Mongo             | Database used by Unifi Controller
 Logs              | Log display for Unifi Controller
 Registry          | Private instance of a Docker registry for development
+Caddy             | Caddy based reverse proxy for Forgejo
+Forgejo           | Forgejo is an open source alternative to github or gitlab. It has been adopted recently as the next gen replacement for dist-git.
 
 The Unifi Controller is the web-based management application for Unifi network equipment. I use Jacob Alberty's [docker-based](https://github.com/jacobalberty/unifi-docker) version of the software. Please note that Ubiquiti does not officially support this software running in a Docker container at this time (April 2020). The Controller is used to manage all aspects of a Unifi network. The mongo and log services both support the Unifi Controller.
 
@@ -41,6 +43,8 @@ The [Pi-Hole](https://www.pi-hole.net) is the upstream DNS server to all network
 The [DNS-Over-HTTPS (DOH) client](https://hub.docker.com/r/buckaroogeek/doh-client) is the upstream DNS provider to the Pi-Hole. The DOH client receives DNS queries from the Pi-Hole using the standard plain text DNS protocol and forwards them to an upstream DNS server on the internet using an encrypted protocol (https). Google and CloudFlare are two well-known provides of DNS over HTTPS on the internet. The primary benefit of DOH is that by using HTTPS for DNS, none of the internet service providers between the home or office network and the upstream DOH server can see and monitor the DNS traffic.
 
 The Registry service is extraneous to the Unifi Controller and supporting services. I use this for development purposes and should be deleted if not needed.
+
+Forgejo is a github-like service for a git repository server and companion web user interface. Forgejo also provides a container registry service built-in. This service will be used as the foundation for a git-ops based ecosystem of bootc containers running an in-house Kubernetes cluster on VMs and Raspberry Pi devices.
 
 ## Docker Host
 [Synology](https://www.synology.com) Network Attached Storage (NAS) device. Specifically a DS218+ (as I write this in April 2020). The DS218+ is used, in my case, as the docker host but any computer running docker on the same network should suffice. In principle, these services could be deployed to a computer that is external to the home network (e.g. Amazon cloud). I have not done so, and caution anyone using this compose file in the cloud to thoroughly investigate and mitigate any possible security ramifications.
