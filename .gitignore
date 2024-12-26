@@ -9,3 +9,5 @@ notes
 
 certs/
 temp/
+old/
+pihole_password.txt

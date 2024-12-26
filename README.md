@@ -2,7 +2,6 @@ Yet Another Unifi Controller, Pi-Hole, and DNS-Over-HTTPS Setup using Docker Com
 ============================================================================
 
 ## Description
-1 Dec 2023 update. Added compose.yaml which can replace docker-compose.yaml on systems with Docker Compose V2 (note compose V2 refers to the version of the software and is not the same as compose file format version 2). Compose V2 also supports an ```include``` attribute as of Compose V2.20. However, Synology DSM 7.2 currently provides Compose V2.0.9 so the include attributes are commented out.
 
 A docker-compose yaml file to manage a Unifi Controller service, a Pi-Hole service, and a DNS-Over-HTTPS client service for my home network. Also included is a supporting script for the docker host. Additional services may be included for development/testing (e.g. a local docker registry) or to support one of the other services (e.g. logs and mongo for the Unifi Controller).
 
@@ -13,6 +12,7 @@ A separate bash script is provided that enables the docker host to have a direct
 ## Update Notes
 Date        | Notes
 ----------  | -------------------------------
+26 Dec 2024 | Add support for caddy as reverse proxy and forgejo. Initial reverse proxy will be forge.lan which is the name forgejo server will use. Forge.lan will use the caddy IP, git.forge.lan will use the forgejo IP. All dns names served via Pi Hole.
 1 Dec 2023  | Synology DSM 7.2 uses docker-compose v2 (although not as 'docker compose'). Added compose.yaml to replace docker-compose.yaml. Very similar with addition of unifibridge network to isolate unifi log and unifi mongo containers on a docker bridge network and remove them from the macvlan. Logs and mongo did not need to be visible on lan. Also moved unifi to buckaroogeek as Jacob Alberty has not been online to update his images for quite some time. I hope he is all right.
 8 Dec 2022  | Synology DSM 7 uses systemd. The docker macvlan post by Ivan Smirnov (see below) outlines a simple integration of the shim.sh script with systemd which helps to automate network configuration for macvlan containers following network restarts.
 8 March 2021| DOH-Client tag moved from latest to current release (2.2.10). The rpmcache service is still a work in progress and will not work correctly.

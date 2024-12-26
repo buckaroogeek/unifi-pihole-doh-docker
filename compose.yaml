@@ -176,6 +176,23 @@ services:
       - '3000'
       - '22'
 
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.214
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - '80'
+      - '443'
+      - '443/udp'
+    volumes:
+      - /volume1/docker/caddy/etc:/etc/caddy
+      - /volume1/docker/caddy/site:/srv
+      - /volume1/docker/caddy/data:/data
+      - /volume1/docker/caddy/config:/config
 
 networks:
   macvlan1:
