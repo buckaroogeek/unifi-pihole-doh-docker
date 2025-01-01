@@ -5,11 +5,12 @@ Yet Another Unifi Controller, Pi-Hole, and DNS-Over-HTTPS Setup using Docker Com
 
 A docker-compose yaml file to manage a Unifi Controller service, a Pi-Hole service, and a DNS-Over-HTTPS client service for my home network. Also included is a supporting script for the docker host. Additional services may be included for development/testing (e.g. a local docker registry) or to support one of the other services (e.g. logs and mongo for the Unifi Controller).
 
-In the ```docker-compose.yaml``` file Version 2 of the Docker compose format is used because macvlan networks are not supported in version 3 as a network configuration at this time. If compose format version 3 is required then the macvlan can be established via an external docker command.
+The `compose.yaml` file uses Docker Compose V2 file specification (not to be confused with the Compose V1 specification which has Version 1, Version 2, or Version 3 formats).
 
 A separate bash script is provided that enables the docker host to have a direct network connection to the containers on the docker macvlan. See the technical notes below. See ./scripts/shim.sh for the script.
 
 ## Update Notes
+
 Date        | Notes
 ----------  | -------------------------------
 26 Dec 2024 | Add support for caddy as reverse proxy and forgejo. Initial reverse proxy will be forge.lan which is the name forgejo server will use. Forge.lan will use the caddy IP, git.forge.lan will use the forgejo IP. All dns names served via Pi Hole.
@@ -50,9 +51,9 @@ Forgejo is a github-like service for a git repository server and companion web u
 [Synology](https://www.synology.com) Network Attached Storage (NAS) device. Specifically a DS218+ (as I write this in April 2020). The DS218+ is used, in my case, as the docker host but any computer running docker on the same network should suffice. In principle, these services could be deployed to a computer that is external to the home network (e.g. Amazon cloud). I have not done so, and caution anyone using this compose file in the cloud to thoroughly investigate and mitigate any possible security ramifications.
 
 ## Network Topology
-All unifi equipment, including a gateway (USG), switches (three 8 port switches), access points (five access points in 3 buildings), the wireless bridges between buildings (three [Ubiquiti AirMax Nanobeams](https://www.ui.com/airmax/nanobeam-ac-gen2/)), the Controller, and the Synology (docker host) are all on the same subnet - for example all using 192.168.110.x IP addresses. Docker is configured with a docker macvlan so that each container (controller, pi-hole, doh client) also has a unique IP address on the same subnet. See the technical notes below and the docker-compose.yaml file for more details on the macvlan. 
+All unifi equipment, including a gateway (USG), switches (three 8 port switches), access points (five access points in 3 buildings), the wireless bridges between buildings (three [Ubiquiti AirMax Nanobeams](https://www.ui.com/airmax/nanobeam-ac-gen2/)), the Controller, and the Synology (docker host) are all on the same subnet - for example all using 192.168.110.x IP addresses. Docker is configured with a docker macvlan so that each container (controller, pi-hole, doh client) also has a unique IP address on the same subnet. See the technical notes below and the compose.yaml file for more details on the macvlan. 
 
-The docker macvlan (macvlan1) is configured in the docker-compose.yaml file to include this IP range: 192.168.110.192/26. See the [CIDR Subnet Calculator](https://www.xarg.org/tools/subnet-calculator/?q=192.168.110.192%2F26) for more details. Please be aware that the IP addresses in this macvlan subnet overlap with the IP address configuration for all other network equipment on local area network. I compensate for this overlap, which can cause a lot of problems if not accounted for, by only using hard coded IP addresses for all devices on this subnet (192.168.110.1/24). All other devices such as personal computers, smart phones, Tivo, etc, on the home network use another VLAN (actually multiple VLANs for family devices and computers, guest access, IOT devices that contact the internet, and a NoT VLAN for devices that only need access to a local home automation service).
+The docker macvlan (macvlan1) is configured in the compose.yaml file to include this IP range: 192.168.110.192/26. See the [CIDR Subnet Calculator](https://www.xarg.org/tools/subnet-calculator/?q=192.168.110.192%2F26) for more details. Please be aware that the IP addresses in this macvlan subnet overlap with the IP address configuration for all other network equipment on local area network. I compensate for this overlap, which can cause a lot of problems if not accounted for, by only using hard coded IP addresses for all devices on this subnet (192.168.110.1/24). All other devices such as personal computers, smart phones, Tivo, etc, on the home network use another VLAN (actually multiple VLANs for family devices and computers, guest access, IOT devices that contact the internet, and a NoT VLAN for devices that only need access to a local home automation service).
 
 Why use a macvlan for the containers? The macvlan simplifies configuration and results in a system that is easier to understand. Since the Pi-Hole and DOH Client containers both use port 53, having a unique IP on the home network avoids the need to map ports and juggle configurations. Similarly, for port 443 used by both the Unifi and Pi-Hole containers, separate IPs offer the same benefit. Other docker network configurations are feasible however. This configuration is just what works for me - but then my background in IT goes back to punch cards so I could well just be old fashioned!
 
@@ -62,17 +63,19 @@ Docker-compose is used to manage all containers on the docker host. On the Synol
 
 The .env file in the repository is not used at this time. I may use it to reduce duplication of some parameters in the compose file. 
 
+See [README-FORGEJO.md](README-FORGEJO.md) for additional notes on setting up the Forgejo container.
+
 See the [Pi-Hole README.md](https://github.com/pi-hole/docker-pi-hole) for additional Pi-Hole variables and configuration options.
 
 See the [DOH Client Docker Hub page](https://hub.docker.com/r/buckaroogeek/doh-client) for additional configuration options for the DOH client. See the configuration note below to make any needed changes to the doh-client.conf file and where to place it. By default the DOH Client will respond to dig and other DNS tools from any IP. This makes testing easier and in my case not a significant security problem of itself (rather my problems are much greater if that is happening). The configuration file can be used to lock down the DOH client so that it is only listening to the Pi-Hole server.
 
 See Jacob's [Unifi Docker README.md](https://github.com/jacobalberty/unifi-docker) for additional Unifi Controller options. 
 
-Several containers use external volumes to preserve information or data across container restarts. Before deploying this docker-compose.yaml file, use the Synology File Station web interface to create each mount point. For the Pi-Hole service create two subdirectories at /volume1/docker/pihole/pihole-configs and /volume1/docker/pihole/dnsmasq.d-configs. The DOH client has one mount point at /volume1/docker/dohclient and so forth for all services defined in the compose file. These must exist before starting the containers.
+Several containers use external volumes to preserve information or data across container restarts. Before deploying this compose.yaml file, use the Synology File Station web interface to create each mount point. For the Pi-Hole service create two subdirectories at /volume1/docker/pihole/pihole-configs and /volume1/docker/pihole/dnsmasq.d-configs. The DOH client has one mount point at /volume1/docker/dohclient and so forth for all services defined in the compose file. These must exist before starting the containers.
 
 The PiHole docker container uses the WEBPASSWORD environment variable to define the admin password for the web interface. Set this to your own value.
 
-As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the docker-compose yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts can vary based on the docker host OS. For a Synology NAS with DSM 7 or newer, the section on Persisting the macvlan network settings from https://blog.ivansmirnov.name/set-up-pihole-using-docker-macvlan-network/ is helpful.
+As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the compose.yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts can vary based on the docker host OS. For a Synology NAS with DSM 7 or newer, the section on Persisting the macvlan network settings from https://blog.ivansmirnov.name/set-up-pihole-using-docker-macvlan-network/ is helpful.
 
 ```
 sudo cp scripts/shim.sh /usr/local/bin
@@ -89,24 +92,24 @@ A the next network restart or system boot, the shim.sh script will execute and e
 
 Docker Compose is a command line executable available for most linux systems uncluding the Synology. There are many references available - I find the original Docker documentation very approachable and useful: https://docs.docker.com/compose/.
 
-Start all services in the default docker-compose.yaml file
+Start all services in the default compose.yaml file
 ```bash
 sudo docker-compose up
 ```
 
-Start all services in the default docker-compose.yaml file and detach.
+Start all services in the default compose.yaml file and detach.
 ```bash
 sudo docker-compose up -d
 ```
 
-Start the Pi-Hole service in the default docker-compose.yaml file and detach.
+Start the Pi-Hole service in the default compose.yaml file and detach.
 ```bash
 sudo docker-compose up -d pihole
 ```
 
-Start all services in both docker-compose.yaml files and detach.
+Start all services in both compose.yaml files and detach.
 ```bash
-sudo docker-compose up -d -f docker-compose.yaml -f docker-compose-farmos.yaml
+sudo docker-compose up -d -f compose.yaml -f docker-compose-farmos.yaml
 ```
 
 ## Configuration
