@@ -56,13 +56,13 @@ Please note that I use a Fedora workstation so I may make assumptions about avai
    1. I used the Synology web UI to create the sub-directory for the container's `/data/` directory. In my case this is a `forgejo` sub-directory in the existing `/volum1/docker` directory that is the root directory for all container volumes on this host.
 
 
-1. SSH into the Synology and start `forgejo` for the first time using `docker-compose`. Forgejo will create subdirectories under `/data` on the container which are mapped to the designated location on the Synology file system.
+1. SSH into the Synology and start `forgejo` for the first time using `docker-compose`. Forgejo will create sub-directories under `/data` on the container which are mapped to the designated location on the Synology file system.
 
    ```bash
    sudo docker-compose -f compose.yaml up -d forgejo
    ```
 
-1. While still in ssh on the Synology, edit the Forgejo `app.ini` configuration file to and make necessary changes and additions. My copy is stored in this repository in the `forgejo` subdirectory. I just used vi to make the edits but there are alternatives such as downloading to your workstation or using the Synology Text Edit application.
+1. While still in ssh on the Synology, edit the Forgejo `app.ini` configuration file to and make necessary changes and additions. My copy is stored in this repository in the `forgejo` sub-directory. I just used vi to make the edits but there are alternatives such as downloading to your workstation or using the Synology Text Edit application.
 
    ```bash
    sudo vi /volume1/docker/forgejo/gitea/conf/app.ini
@@ -108,15 +108,15 @@ Please note that I use a Fedora workstation so I may make assumptions about avai
    }
    ```
 
-   1. If you have `caddy` installed on your workstation, you can use it to correctly format the `Caddyfile`. Navigate to the subdirectory containing the `Caddyfile` and execute the following:
+   1. If you have `caddy` installed on your workstation, you can use it to correctly format the `Caddyfile`. Navigate to the sub-directory containing the `Caddyfile` and execute the following:
 
       ```bash
       caddy fmt --overwrite
       ```
 
-   1. Note the paths for the TLS cert and key files are relative to the container root and in the `cert` subdirectory of the `/etc/caddy` volume defined in the docker-compose service definition.
+   1. Note the paths for the TLS cert and key files are relative to the container root and in the `cert` sub-directory of the `/etc/caddy` volume defined in the docker-compose service definition.
 
-   1. Create the `certs` subdirectory in `/etc/caddy` and copy the two (2) certs into it. This can be done from the command line on the docker host machine or using a web ui if available.
+   1. Create the `certs` sub-directory in `/etc/caddy` and copy the two (2) certs into it. This can be done from the command line on the docker host machine or using a web ui if available.
 
 1. Create dns entries for `forge.lan`, `git.forge.lan`, and `forgejo.lan`. The IP address for `forge.lan` will be the address assigned to the Caddy service. The IP address for `forgejo.lan` and `git.forge.lan` will be the address assigned to the Forgejo service. I use pi-hole for DNS services on the lan (see `compose.yaml` and README.md for more information about pi-hole setup).
 
