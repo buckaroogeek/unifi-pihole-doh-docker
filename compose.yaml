@@ -53,14 +53,14 @@ services:
     container_name: Pi-Hole
     image: pihole/pihole:latest
     hostname: pihole
-    domainname: lan             # <-- Update
+    domainname: lan
     depends_on:
       - doh-client
     cap_add:
       - NET_ADMIN
     networks:
       macvlan1:
-        ipv4_address: 192.168.110.201   #  <-- Update
+        ipv4_address: 192.168.110.201
     volumes:
       - '/volume1/docker/pihole/pihole-configs:/etc/pihole/'
       - '/volume1/docker/pihole/dnsmasq.d-configs:/etc/dnsmasq.d/'
@@ -102,7 +102,7 @@ services:
     restart: unless-stopped
 
   unifi:
-    image: "buckaroogeek/unifi:v8"
+    image: "buckaroogeek/unifi:v9"
     container_name: Unifi-Network-Application
     hostname: unifi2
     domainname: lan
@@ -159,7 +159,7 @@ services:
       - /volume1/docker/unifi2/log:/unifi/log
 
   forgejo:
-    image: codeberg.org/forgejo/forgejo:9
+    image: codeberg.org/forgejo/forgejo:10
     container_name: Forgejo
     environment:
       - USER_UID=1000
@@ -178,6 +178,7 @@ services:
 
   caddy:
     image: caddy:latest
+    container_name: Caddy
     restart: unless-stopped
     networks:
       macvlan1:
