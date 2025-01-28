@@ -84,7 +84,7 @@ services:
 
   doh-client:     # DOH Client for local network
     container_name: DOH-Client
-    image: buckaroogeek/doh-client:2.2.19
+    image: buckaroogeek/doh-client:2.2.20
     hostname: dohclient
     domainname: lan
     cap_add:
