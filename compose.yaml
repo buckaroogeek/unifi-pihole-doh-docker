@@ -54,8 +54,8 @@ services:
     image: pihole/pihole:latest
     hostname: pihole
     domainname: lan
-    depends_on:
-      - doh-client
+  #  depends_on:   - doh-client no longer used
+  #    - doh-client
     cap_add:
       - NET_ADMIN
     networks:
@@ -82,24 +82,25 @@ services:
       - pihole_webpasswd
     restart: unless-stopped
 
-  doh-client:     # DOH Client for local network
-    container_name: DOH-Client
-    image: buckaroogeek/doh-client:2.2.20
-    hostname: dohclient
-    domainname: lan
-    cap_add:
-      - NET_ADMIN
-    networks:
-      macvlan1:
-        ipv4_address: 192.168.110.203
-    command: ["-conf=/etc/dns-over-https/doh-client.conf"]
-    volumes:
-      - /volume1/docker/dohclient:/etc/dns-over-https
-    ports:
-      - 53/tcp
-      - 53/udp
-      - 5380/tcp
-    restart: unless-stopped
+#  10 Feb 2025 - doh client replaced by pfsense and DOT
+#  doh-client:     # DOH Client for local network
+#    container_name: DOH-Client
+#    image: buckaroogeek/doh-client:2.2.20
+#    hostname: dohclient
+#    domainname: lan
+#    cap_add:
+#      - NET_ADMIN
+#    networks:
+#      macvlan1:
+#        ipv4_address: 192.168.110.203
+#    command: ["-conf=/etc/dns-over-https/doh-client.conf"]
+#    volumes:
+#      - /volume1/docker/dohclient:/etc/dns-over-https
+#    ports:
+#      - 53/tcp
+#      - 53/udp
+#      - 5380/tcp
+#    restart: unless-stopped
 
   unifi:
     image: "buckaroogeek/unifi:v9"
