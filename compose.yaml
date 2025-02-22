@@ -49,9 +49,10 @@ services:
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
 
+  # v5 pihole
   pihole:     # Pi Hole dns server for local network
     container_name: Pi-Hole
-    image: pihole/pihole:latest
+    image: pihole/pihole:2024.07.0
     hostname: pihole
     domainname: lan
   #  depends_on:   - doh-client no longer used
@@ -77,6 +78,40 @@ services:
       ServerIP: 192.168.110.201
       VIRTUAL_HOST: pihole.lan
       WEBPASSWORD: pihole_webpasswd
+      TZ: 'America/Los_Angeles'
+    secrets:
+      - pihole_webpasswd
+    restart: unless-stopped
+
+  # v6 pihole
+  piholev6:     # Pi Hole dns server for local network
+    container_name: Pi-Hole-V6
+    image: pihole/pihole:latest
+    hostname: pihole
+    domainname: lan
+  #  depends_on:   - doh-client no longer used
+  #    - doh-client
+    cap_add:
+      - NET_ADMIN
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.202
+    volumes:
+      - '/volume1/docker/piholev6/pihole-configs:/etc/pihole/'
+      - '/volume1/docker/piholev6/dnsmasq.d-configs:/etc/dnsmasq.d/'
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+    ports:
+      - 443/tcp
+      - 53/tcp
+      - 53/udp
+      - 67/udp
+      - 80/tcp
+    environment:
+      ServerIP: 192.168.110.202
+      VIRTUAL_HOST: pihole2.lan
+      FTLCONF_webserver_api_password: pihole_webpasswd
       TZ: 'America/Los_Angeles'
     secrets:
       - pihole_webpasswd
