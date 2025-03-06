@@ -16,38 +16,39 @@
 # version 3.x at this time so this compose file needs to use
 # the 2.x format.
 
-# name: lan_services
+name: lan_services
 
 # include attribute available in compose 2.20 and newer
-# include:
+include:
 #  - ./services/registry.yaml
-#  - ./services/pihole.yaml
+  - ./services/pihole.yaml
 #  - ./services/unifi.yaml
 
 services:
-  registry:      # Docker registry server for local development
-    container_name: Registry
-    restart: unless-stopped
-    image: registry:2
-    hostname: reg
-    domainname: lan
-    networks:
-      macvlan1:
-        ipv4_address: 192.168.110.210
-    ports:
-      - 443/tcp
-      - 443/udp
-    volumes:
-      - /volume1/docker/registry:/var/lib/registry
-      - /volume1/docker/registry/certs:/certs
-      - /volume1/docker/registry/auth:/auth
-    environment:
-      REGISTRY_HTTP_ADDR: 0.0.0.0:443
-      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-      REGISTRY_AUTH: htpasswd
-      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
-      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+  # registry depricated. Replaced by forgejo
+#  registry:      # Docker registry server for local development
+#    container_name: Registry
+#    restart: unless-stopped
+#    image: registry:2
+#    hostname: reg
+#    domainname: lan
+#    networks:
+#      macvlan1:
+#        ipv4_address: 192.168.110.210
+#    ports:
+#      - 443/tcp
+#      - 443/udp
+#    volumes:
+#      - /volume1/docker/registry:/var/lib/registry
+#      - /volume1/docker/registry/certs:/certs
+#      - /volume1/docker/registry/auth:/auth
+#    environment:
+#      REGISTRY_HTTP_ADDR: 0.0.0.0:443
+#      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+#      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+#      REGISTRY_AUTH: htpasswd
+#      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+#      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
 
   # v5 pihole
   pihole:     # Pi Hole dns server for local network
@@ -77,40 +78,40 @@ services:
     environment:
       ServerIP: 192.168.110.201
       VIRTUAL_HOST: pihole.lan
-      WEBPASSWORD: pihole_webpasswd
+      WEBPASSWORDi_FILE: pihole_webpasswd
       TZ: 'America/Los_Angeles'
     secrets:
       - pihole_webpasswd
     restart: unless-stopped
 
   # v6 pihole
-  piholev6:     # Pi Hole dns server for local network
-    container_name: Pi-Hole-V6
-    image: pihole/pihole:latest
-    hostname: pihole
-    domainname: lan
-  #  depends_on:   - doh-client no longer used
-  #    - doh-client
-    cap_add:
-      - NET_ADMIN
-    networks:
-      macvlan1:
-        ipv4_address: 192.168.110.202
-    volumes:
-      - '/volume1/docker/piholev6/pihole-configs:/etc/pihole/'
-      - '/volume1/docker/piholev6/dnsmasq.d-configs:/etc/dnsmasq.d/'
-    ports:
-      - 443/tcp
-      - 53/tcp
-      - 53/udp
-      - 67/udp
-      - 80/tcp
-    environment:
-      FTLCONF_webserver_api_password: pihole_webpasswd
-      TZ: 'America/Los_Angeles'
-    secrets:
-      - pihole_webpasswd
-    restart: unless-stopped
+  # piholev6:     # Pi Hole dns server for local network
+  #   container_name: Pi-Hole-V6
+  #   image: pihole/pihole:latest
+  #   hostname: pihole2
+  #   domainname: lan
+  #   depends_on:   - doh-client no longer used
+  #     - doh-client
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     macvlan1:
+  #       ipv4_address: 192.168.110.202
+  #  volumes:
+  #     - '/volume1/docker/piholev6/pihole-configs:/etc/pihole/'
+  #    - '/volume1/docker/piholev6/dnsmasq.d-configs:/etc/dnsmasq.d/'
+  #  ports:
+  #    - 443/tcp
+  #    - 53/tcp
+  #    - 53/udp
+  #    - 67/udp
+  #    - 80/tcp
+  #  environment:
+  #    FTLCONF_webserver_api_password: pihole_webpasswd
+  #    TZ: 'America/Los_Angeles'
+  #  secrets:
+  #    - pihole_webpasswd
+  #  restart: unless-stopped
 
 #  10 Feb 2025 - doh client replaced by pfsense and DOT
 #  doh-client:     # DOH Client for local network
