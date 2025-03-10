@@ -4,7 +4,7 @@
 
 services:
   unifi:
-    image: "buckaroogeek/unifi:v8"
+    image: "buckaroogeek/unifi:v9"
     container_name: Unifi-Network-Application
     hostname: unifi2
     domainname: lan
@@ -37,8 +37,9 @@ services:
       - "8843/tcp"    # HTTPS portal redirection
       - "10001/udp"   # AP discovery
       - "27117/tcp"   # DB communications
+
   mongo:
-    image: mongo:3.6
+    image: mongo:4.4
     container_name: MongoDB
     networks:
       unifibridge1:
@@ -46,6 +47,7 @@ services:
     volumes:
       - /volume1/docker/mongo/db:/data/db
       - /volume1/docker/mongo/dbcfg:/data/configdb
+
   logs:
     image: bash
     container_name: Unifi-Logs
@@ -54,7 +56,7 @@ services:
     depends_on:
       - unifi
     command: bash -c 'tail -F /unifi/log/*.log'
-    restart: always
+    restart: unless-stopped
     volumes:
       - /volume1/docker/unifi2/log:/unifi/log
 ...

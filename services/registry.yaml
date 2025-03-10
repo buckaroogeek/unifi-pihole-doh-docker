@@ -4,7 +4,7 @@
 services:
   registry:      # Docker registry server for local development
     container_name: Registry
-    restart: always
+    restart: unless-stopped
     image: registry:2
     hostname: reg
     domainname: lan
@@ -17,8 +17,12 @@ services:
     volumes:
       - /volume1/docker/registry:/var/lib/registry
       - /volume1/docker/registry/certs:/certs
+      - /volume1/docker/registry/auth:/auth
     environment:
       REGISTRY_HTTP_ADDR: 0.0.0.0:443
       REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
       REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
 ...

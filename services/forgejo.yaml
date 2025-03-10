@@ -1,0 +1,21 @@
+---
+# forgejo service
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:10
+    container_name: Forgejo
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: unless-stopped
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.212
+    volumes:
+      - /volume1/docker/forgejo:/data
+      - /etc/TZ:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - '3000'
+      - '22'
+...

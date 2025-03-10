@@ -1,0 +1,23 @@
+---
+
+# DOH Client
+services:
+  doh-client:     # DOH Client for local network
+    container_name: DOH-Client
+    image: buckaroogeek/doh-client:2.2.20
+    hostname: dohclient
+    domainname: lan
+    cap_add:
+      - NET_ADMIN
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.203
+    command: ["-conf=/etc/dns-over-https/doh-client.conf"]
+    volumes:
+      - /volume1/docker/dohclient:/etc/dns-over-https
+    ports:
+      - 53/tcp
+      - 53/udp
+      - 5380/tcp
+    restart: unless-stopped
+...
