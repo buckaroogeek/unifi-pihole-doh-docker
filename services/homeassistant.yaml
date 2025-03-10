@@ -1,0 +1,26 @@
+---
+# home assistant - linuxserver.io container
+#
+services:
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    container_name: homeassistant
+    hostname: ha
+    domainname: lan
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.208
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: 'America/Los_Angeles'
+    volumes:
+      - '/volume1/docker/homeassistant/config:/config'
+      - '/var/run/dbus:/var/run/dbus:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+    ports:
+      - 8123/tcp
+    restart: unless-stopped

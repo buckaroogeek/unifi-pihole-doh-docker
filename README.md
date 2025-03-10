@@ -1,4 +1,4 @@
-Yet Another Unifi Controller, Pi-Hole, and DNS-Over-HTTPS Setup using Docker Compose
+Yet Another Unifi Controller, Pi-Hole, and Forgejo Set-up using Docker Compose
 ============================================================================
 
 ## Description
@@ -13,6 +13,7 @@ A separate bash script is provided that enables the docker host to have a direct
 
 Date        | Notes
 ----------  | -------------------------------
+23 Feb 2025 | DNS-Over-HTTPS container has been replaced by the DOT service in my pfsense firewall. Forgejo will replace Registry for local container registry services. Pi-Holein process of updating to the current V6 release.
 26 Dec 2024 | Add support for caddy as reverse proxy and forgejo. Initial reverse proxy will be forge.lan which is the name forgejo server will use. Forge.lan will use the caddy IP, git.forge.lan will use the forgejo IP. All dns names served via Pi Hole.
 1 Dec 2023  | Synology DSM 7.2 uses docker-compose v2 (although not as 'docker compose'). Added compose.yaml to replace docker-compose.yaml. Very similar with addition of unifibridge network to isolate unifi log and unifi mongo containers on a docker bridge network and remove them from the macvlan. Logs and mongo did not need to be visible on lan. Also moved unifi to buckaroogeek as Jacob Alberty has not been online to update his images for quite some time. I hope he is all right.
 8 Dec 2022  | Synology DSM 7 uses systemd. The docker macvlan post by Ivan Smirnov (see below) outlines a simple integration of the shim.sh script with systemd which helps to automate network configuration for macvlan containers following network restarts.
@@ -21,7 +22,7 @@ Date        | Notes
 31 May      | Added docker-compose-farmos.yaml - docker configuration for farmos and database. FarmOS (farmos.org) is an open source farm management application that I am exploring for my small hay business.
 
 ## Target
-A home or small office network that uses [Ubiquiti](https://www.ubnt.com) Unifi equipment and would benefit from a [Pi-Hole](https://www.pi-hole.net) DNS server and DNS-Over-HTTPS for encryption of DNS queries to upstream DNS provider(s).
+A home or small office network that uses [Ubiquiti](https://www.ubnt.com) Unifi equipment and would benefit from a [Pi-Hole](https://www.pi-hole.net) DNS server which uses a pfsense firewall provides DNS-Over-TLS (DOT) encryption of DNS queries to upstream DNS provider(s).
 
 Important Note: this configuration is designed for a home network that is double NATed by my ISP and behind a couple of firewalls I manage. It can be adapted to other environments but will need a thorough understanding of the security implications when doing so.
 
@@ -30,10 +31,10 @@ Service           | Notes
 ----------------  | ---------------------------------------------
 Unifi Controller  | Web based Unifi network management application
 Pi-Hole           | Blocking/filtering/caching DNS server
-DOH Client        | Uses HTTPS to send DNS queries to upstream
+~~DOH Client~~        | ~~Uses HTTPS to send DNS queries to upstream~~
 Mongo             | Database used by Unifi Controller
 Logs              | Log display for Unifi Controller
-Registry          | Private instance of a Docker registry for development
+~~Registry~~          | ~~Private instance of a Docker registry for development~~
 Caddy             | Caddy based reverse proxy for Forgejo
 Forgejo           | Forgejo is an open source alternative to github or gitlab. It has been adopted recently as the next gen replacement for dist-git.
 
@@ -43,7 +44,7 @@ The [Pi-Hole](https://www.pi-hole.net) is the upstream DNS server to all network
 
 The [DNS-Over-HTTPS (DOH) client](https://hub.docker.com/r/buckaroogeek/doh-client) is the upstream DNS provider to the Pi-Hole. The DOH client receives DNS queries from the Pi-Hole using the standard plain text DNS protocol and forwards them to an upstream DNS server on the internet using an encrypted protocol (https). Google and CloudFlare are two well-known provides of DNS over HTTPS on the internet. The primary benefit of DOH is that by using HTTPS for DNS, none of the internet service providers between the home or office network and the upstream DOH server can see and monitor the DNS traffic.
 
-The Registry service is extraneous to the Unifi Controller and supporting services. I use this for development purposes and should be deleted if not needed.
+~~The Registry service is extraneous to the Unifi Controller and supporting services. I use this for development purposes and should be deleted if not needed.~~
 
 Forgejo is a github-like service for a git repository server and companion web user interface. Forgejo also provides a container registry service built-in. This service will be used as the foundation for a git-ops based ecosystem of bootc containers running an in-house Kubernetes cluster on VMs and Raspberry Pi devices.
 
@@ -61,7 +62,9 @@ Why use a macvlan for the containers? The macvlan simplifies configuration and r
 
 Docker-compose is used to manage all containers on the docker host. On the Synology, this is done from the command line and not from the Docker web GUI. [Docker-compose](https://docs.docker.com/compose/reference/overview/) has complete control over all images and containers. Individual containers can be managed (start, stop, inspect, update) as well as all containers at the same time./
 
-The .env file in the repository is not used at this time. I may use it to reduce duplication of some parameters in the compose file. 
+~~The .env file in the repository is not used at this time. I may use it to reduce duplication of some parameters in the compose file.~~
+
+[Docker Compose Secrets](https://docs.docker.com/compose/how-tos/use-secrets/) is used to provide the web admin password to the Pi-Hole container. The Pi-Hole docker container uses the WEBPASSWORD_FILE environment variable to define the admin password for the web interface. Set this to your own value.
 
 See [README-FORGEJO.md](README-FORGEJO.md) for additional notes on setting up the Forgejo container.
 
@@ -73,7 +76,6 @@ See Jacob's [Unifi Docker README.md](https://github.com/jacobalberty/unifi-docke
 
 Several containers use external volumes to preserve information or data across container restarts. Before deploying this compose.yaml file, use the Synology File Station web interface to create each mount point. For the Pi-Hole service create two subdirectories at /volume1/docker/pihole/pihole-configs and /volume1/docker/pihole/dnsmasq.d-configs. The DOH client has one mount point at /volume1/docker/dohclient and so forth for all services defined in the compose file. These must exist before starting the containers.
 
-The PiHole docker container uses the WEBPASSWORD environment variable to define the admin password for the web interface. Set this to your own value.
 
 As noted above, a docker macvlan is used to provide fixed IP addresses to all containers managed as a service in the compose.yaml file/. Using a docker macvlan on any linux docker host creates a complication in that by default a network path between the host IP and the docker macvlan IP space does not exist unless additional steps are taken. See the excellent overview of the problem and solution at https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/. I have a small script to correct this complication on the docker host. Other network configurations are possible but beyond the scope of this readme. Please be aware that making the configuration enabled by the script persistent across system reboots and network restarts can vary based on the docker host OS. For a Synology NAS with DSM 7 or newer, the section on Persisting the macvlan network settings from https://blog.ivansmirnov.name/set-up-pihole-using-docker-macvlan-network/ is helpful.
 

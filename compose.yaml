@@ -16,12 +16,15 @@
 # version 3.x at this time so this compose file needs to use
 # the 2.x format.
 
-name: lan_services
+# uncomment to set project name in docker; otherwise default
+# name derived from directory name is used
+# name: lan_services
 
 # include attribute available in compose 2.20 and newer
 include:
 #  - ./services/registry.yaml
   - ./services/pihole.yaml
+  - ./services/homeassistant.yaml
 #  - ./services/unifi.yaml
 
 services:
