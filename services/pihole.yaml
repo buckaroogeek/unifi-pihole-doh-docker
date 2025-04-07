@@ -9,8 +9,6 @@ services:
     image: pihole/pihole:latest
     hostname: pihole2
     domainname: lan
-  #  depends_on:   - doh-client no longer used
-  #    - doh-client
     cap_add:
       - NET_ADMIN
       - SYS_TIME
@@ -28,7 +26,7 @@ services:
       - 67/udp
       - 80/tcp
     environment:
-      FTLCONF_webserver_api_password: pihole_webpasswd
+      WEBPASSWORD_FILE: /run/secrets/pihole_webpasswd
       TZ: 'America/Los_Angeles'
     secrets:
       - pihole_webpasswd
