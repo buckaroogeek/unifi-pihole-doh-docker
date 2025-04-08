@@ -25,8 +25,7 @@ services:
       - 53/udp
       - 80/tcp
     environment:
-      FTLCONF_webserver_api_password: ''
-      WEBPASSWORD_FILE: /run/secrets/pihole_webpasswd
+      WEBPASSWORD_FILE: pihole_webpasswd
       TZ: 'America/Los_Angeles'
     secrets:
       - pihole_webpasswd
