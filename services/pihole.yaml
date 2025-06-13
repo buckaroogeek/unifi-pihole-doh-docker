@@ -39,7 +39,7 @@ services:
       SYNC_GRAVITY_CLIENT: false
       SYNC_GRAVITY_CLIENT_BY_GROUP: false
 
-      CRON: */15 * * * *
+      CRON: '*/15 * * * *'
     restart: unless-stopped
 
   # v6 pihole - primary for nebula-sync
