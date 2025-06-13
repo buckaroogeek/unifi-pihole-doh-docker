@@ -50,7 +50,7 @@ services:
     hostname: pihole2
     domainname: lan
     cap_add:
-      - NET_ADMEIN
+      - NET_ADMIN
       - SYS_TIME
       - NET_BIND_SERVICE
     networks:
@@ -83,7 +83,7 @@ services:
     hostname: pihole4
     domainname: lan
     cap_add:
-      - NET_ADMEIN
+      - NET_ADMIN
       - SYS_TIME
       - NET_BIND_SERVICE
     networks:
