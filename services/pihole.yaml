@@ -2,7 +2,47 @@
 # pihole dns services
 #
 services:
-  # v6 pihole
+  # nebula sync to keep multiple instances in sync
+  nebula-sync:
+    image: ghcr.io/lovelaze/nebula-sync:latest
+    container_name: nebula-sync
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.205
+    secrets:
+      - pihole_webpasswd
+    environment:
+      PRIMARY: https://pihole2.lan
+      REPLICAS: https://pihole.lan
+      PRIMARY_FILE: /run/secrets/pihole_webpasswd
+      REPLICAS_FILE: /run/secrets/pihole_webpasswd
+
+      TZ: 'America/Los_Angeles'
+      CLIENT_SKIP_TLS_VERIFICATION: true
+      FULL_SYNC: false
+      RUN_GRAVITY: false
+
+      SYNC_CONFIG_DNS: true
+      SYNC_CONFIG_DHCP: false
+      SYNC_CONFIG_NTP: false
+      SYNC_CONFIG_RESOLVER: false
+      SYNC_CONFIG_DATABASE: false
+      SYNC_CONFIG_MISC: false
+      SYNC_CONFIG_DEBUG: false
+
+      SYNC_GRAVITY_DHCP_LEASES: false
+      SYNC_GRAVITY_GROUP: false
+      SYNC_GRAVITY_AD_LIST: true
+      SYNC_GRAVITY_AD_LIST_BY_GROUP: true
+      SYNC_GRAVITY_DOMAIN_LIST: true
+      SYNC_GRAVITY_DOMAIN_LIST_BY_GROUP: true
+      SYNC_GRAVITY_CLIENT: false
+      SYNC_GRAVITY_CLIENT_BY_GROUP: false
+
+      CRON: */15 * * * *
+    restart: unless-stopped
+
+  # v6 pihole - primary for nebula-sync
   # dns_secret defined in compose.yaml
   piholev6:     # Pi Hole dns server for local network
     container_name: Pi-Hole-V6
@@ -10,7 +50,7 @@ services:
     hostname: pihole2
     domainname: lan
     cap_add:
-      - NET_ADMIN
+      - NET_ADMEIN
       - SYS_TIME
       - NET_BIND_SERVICE
     networks:
@@ -25,43 +65,76 @@ services:
       - 53/udp
       - 80/tcp
     environment:
-      WEBPASSWORD_FILE: pihole_webpasswd
+      FTLCONF_LOCAL_IPV4: '192.168.110.202'
+      FTLCONF_webserver_port: '443'
+      WEBPASSWORD_FILE: /run/secrets/pihole_webpasswd
       TZ: 'America/Los_Angeles'
     secrets:
       - pihole_webpasswd
     restart: unless-stopped
 
-  # v5 pihole
+
+  # v6 pihole - replica for nebula-sync
+  # Uses original pihole v5 IP and domain name
+  # dns_secret defined in compose.yaml
   pihole:     # Pi Hole dns server for local network
-    container_name: Pi-Hole
-    image: pihole/pihole:2024.07.0
-    hostname: pihole
+    container_name: Pi-Hole4
+    image: pihole/pihole:latest
+    hostname: pihole4
     domainname: lan
-  #  depends_on:   - doh-client no longer used
-  #    - doh-client
     cap_add:
-      - NET_ADMIN
+      - NET_ADMEIN
+      - SYS_TIME
+      - NET_BIND_SERVICE
     networks:
       macvlan1:
-        ipv4_address: 192.168.110.201
+        ipv4_address: 192.168.110.204
     volumes:
-      - '/volume1/docker/pihole/pihole-configs:/etc/pihole/'
-      - '/volume1/docker/pihole/dnsmasq.d-configs:/etc/dnsmasq.d/'
-    dns:
-      - 127.0.0.1
-      - 8.8.8.8
+      - '/volume1/docker/pihole4/pihole-configs:/etc/pihole/'
+      - '/volume1/docker/pihole4/dnsmasq.d-configs:/etc/dnsmasq.d/'
     ports:
       - 443/tcp
       - 53/tcp
       - 53/udp
-      - 67/udp
       - 80/tcp
     environment:
-      ServerIP: 192.168.110.201
-      VIRTUAL_HOST: pihole.lan
-      WEBPASSWORDi_FILE: pihole_webpasswd
+      WEBPASSWORD_FILE: /run/secrets/pihole_webpasswd
       TZ: 'America/Los_Angeles'
     secrets:
       - pihole_webpasswd
     restart: unless-stopped
+
+#  # v5 pihole
+#  pihole:     # Pi Hole dns server for local network
+#    container_name: Pi-Hole
+#    image: pihole/pihole:2024.07.0
+#    hostname: pihole
+#    domainname: lan
+#  #  depends_on:   - doh-client no longer used
+#  #    - doh-client
+#    cap_add:
+#      - NET_ADMIN
+#    networks:
+#      macvlan1:
+#        ipv4_address: 192.168.110.201
+#    volumes:
+#      - '/volume1/docker/pihole/pihole-configs:/etc/pihole/'
+#      - '/volume1/docker/pihole/dnsmasq.d-configs:/etc/dnsmasq.d/'
+#    dns:
+#      - 127.0.0.1
+#      - 8.8.8.8
+#    ports:
+#      - 443/tcp
+#      - 53/tcp
+#      - 53/udp
+#      - 67/udp
+#      - 80/tcp
+#    environment:
+#      ServerIP: 192.168.110.201
+#      VIRTUAL_HOST: pihole.lan
+#      WEBPASSWORDi_FILE: pihole_webpasswd
+#      TZ: 'America/Los_Angeles'
+#    secrets:
+#      - pihole_webpasswd
+#    restart: unless-stopped
 ...
