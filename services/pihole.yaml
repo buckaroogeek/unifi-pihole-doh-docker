@@ -53,6 +53,7 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_TIME
+      - SYS_NICE
       - NET_BIND_SERVICE
     networks:
       macvlan1:
@@ -66,8 +67,8 @@ services:
       - 53/udp
       - 80/tcp
     environment:
-      FTLCONF_LOCAL_IPV4: '192.168.110.202'
-      FTLCONF_webserver_port: '443'
+      # FTLCONF_LOCAL_IPV4: '192.168.110.202'
+      # FTLCONF_webserver_port: '443'
       WEBPASSWORD_FILE: pihole_webpasswd
       TZ: 'America/Los_Angeles'
     secrets:
