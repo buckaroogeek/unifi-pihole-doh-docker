@@ -14,7 +14,7 @@ services:
       - pihole_webpasswd
     environment:
       PRIMARY: https://pihole2.lan
-      REPLICAS: https://pihole.lan
+      REPLICAS: https://pihole4.lan
       PRIMARY_FILE: /run/secrets/pihole_webpasswd
       REPLICAS_FILE: /run/secrets/pihole_webpasswd
 
@@ -79,10 +79,10 @@ services:
   # v6 pihole - replica for nebula-sync
   # Uses original pihole v5 IP and domain name
   # dns_secret defined in compose.yaml
-  pihole4:     # Pi Hole dns server for local network
-    container_name: Pi-Hole4
+  pihole:     # Pi Hole dns server for local network
+    container_name: Pi-Hole
     image: pihole/pihole:latest
-    hostname: pihole4
+    hostname: pihole
     domainname: lan
     cap_add:
       - NET_ADMIN
@@ -91,7 +91,7 @@ services:
       - NET_BIND_SERVICE
     networks:
       macvlan1:
-        ipv4_address: 192.168.110.204
+        ipv4_address: 192.168.110.201
     volumes:
       - '/volume1/docker/pihole4/pihole-configs:/etc/pihole/'
       - '/volume1/docker/pihole4/dnsmasq.d-configs:/etc/dnsmasq.d/'
