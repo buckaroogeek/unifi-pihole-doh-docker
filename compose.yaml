@@ -50,4 +50,6 @@ networks:
 secrets:
   pihole_webpasswd:
     file: pihole_password.txt
+  pihole_webpasswd2:
+    file: pihole_password2.txt
 ...
