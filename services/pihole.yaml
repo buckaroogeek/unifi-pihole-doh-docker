@@ -13,8 +13,8 @@ services:
     secrets:
       - pihole_webpasswd
     environment:
-      PRIMARY: https://pihole2.lan
-      REPLICAS: https://pihole4.lan
+      PRIMARY: https://pihole2.lan/admin/login/
+      REPLICAS: https://pihole.lan/admin/login/
       PRIMARY_FILE: /run/secrets/pihole_webpasswd
       REPLICAS_FILE: /run/secrets/pihole_webpasswd
 
