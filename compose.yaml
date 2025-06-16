@@ -25,6 +25,7 @@ include:
 # registry service replaced for forgejo
 #  - ./services/registry.yaml
   - ./services/pihole.yaml
+#  - ./services/pihole-test.yaml
   - ./services/homeassistant.yaml
   - ./services/forgejo.yaml
   - ./services/caddy.yaml
