@@ -2,7 +2,7 @@
 # pihole dns services
 #
 services:
-  # nebula sync to keep multiple instances in sync
+  # nebula sync to keep multiple pihole instances in sync
   # Use IP addresses for pihole instances due to dns configuration
   # on host synology - To Be Fixed
   nebula-sync:
