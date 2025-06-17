@@ -13,12 +13,14 @@ services:
       macvlan1:
         ipv4_address: 192.168.110.206
     secrets:
-      - pihole_webpasswd
+      - pihole_primary
+      - pihole_replicas
     environment:
-      PRIMARY: https://192.168.110.202
-      REPLICAS: https://192.168.110.201
-      PRIMARY_FILE: /run/secrets/pihole_webpasswd
-      REPLICAS_FILE: /run/secrets/pihole_webpasswd
+    # PRIMARY and REPLICAS not used with docker compose secrets
+    #  PRIMARY: https://192.168.110.202
+    #  REPLICAS: https://192.168.110.201
+      PRIMARY_FILE: /run/secrets/pihole_primary
+      REPLICAS_FILE: /run/secrets/pihole_replicas
 
       TZ: 'America/Los_Angeles'
       CLIENT_SKIP_TLS_VERIFICATION: true
@@ -79,7 +81,7 @@ services:
   # Uses original pihole v5 IP and domain name
   # dns_secret defined in compose.yaml
   pihole:     # Pi Hole dns server for local network
-    container_name: Pi-Hole
+    container_name: pihole
     image: pihole/pihole:latest
     hostname: pihole
     domainname: lan
@@ -92,8 +94,8 @@ services:
       macvlan1:
         ipv4_address: 192.168.110.201
     volumes:
-      - '/volume1/docker/pihole4/pihole-configs:/etc/pihole/'
-      - '/volume1/docker/pihole4/dnsmasq.d-configs:/etc/dnsmasq.d/'
+      - '/volume1/docker/pihole/etc:/etc/pihole/'
+      - '/volume1/docker/pihole/dnsmasq:/etc/dnsmasq.d/'
     ports:
       - 443/tcp
       - 53/tcp
