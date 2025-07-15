@@ -2,7 +2,7 @@
 # forgejo service
 services:
   forgejo:
-    image: codeberg.org/forgejo/forgejo:10
+    image: codeberg.org/forgejo/forgejo:11
     container_name: Forgejo
     environment:
       - USER_UID=1000
