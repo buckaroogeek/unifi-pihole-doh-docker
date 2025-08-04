@@ -1,6 +1,7 @@
 ---
 # unifi network application services
 # includes mondodb and logs services
+# uisp network application service
 
 services:
   unifi:
@@ -59,4 +60,24 @@ services:
     restart: unless-stopped
     volumes:
       - /volume1/docker/unifi2/log:/unifi/log
+
+  uisp:
+    image: "nico640/docker-unms:latest"
+    container_name: UISP-Network-Application
+    hostname: uisp
+    domainname: lan
+    init: true
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.217
+      unifibridge1:
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /volume1/docker/uisp:/config
+      TZ: America/Los_Angeles
+    ports:
+      - "80/tcp"      # Device/ controller comm.
+      - "443/tcp"     # Controller GUI/API as seen in a web browser
+      - "2055/udp"   # AP discovery
 ...
