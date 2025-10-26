@@ -32,6 +32,7 @@ include:
   - ./services/unifi.yaml
 #  10 Feb 2025 - doh client replaced by pfsense and DOT
 #  - ./services/doh-client.yaml
+  - ./services/smokeping.yaml
 
 networks:
   macvlan1:
