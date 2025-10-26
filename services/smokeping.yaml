@@ -1,0 +1,21 @@
+---
+
+# Smoke ping
+services:
+  smoke:     # Smoke ping
+    image: lscr.io/linuxserver/smokeping
+    container_name: smoke
+    hostname: smoke
+    domainname: lan
+    networks:
+      macvlan1:
+        ipv4_address: 192.168.110.209
+    volumes:
+      - /volume1/docker/smokeping/config:/config
+      - /volume1/docker/smokeping/data:/data
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    restart: unless-stopped
+...
