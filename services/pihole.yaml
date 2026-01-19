@@ -49,8 +49,8 @@ services:
 
   # v6 pihole - primary for nebula-sync
   # dns_secret defined in compose.yaml
-  piholev6:     # Pi Hole dns server for local network
-    container_name: Pi-Hole-V6
+  pihole2:     # Pi Hole dns server for local network
+    container_name: pihole2
     image: pihole/pihole:latest
     hostname: pihole2
     domainname: lan
