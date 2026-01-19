@@ -5,7 +5,7 @@
 
 services:
   unifi:
-    image: "buckaroogeek/unifi:v9"
+    image: "buckaroogeek/unifi:v10"
     container_name: Unifi-Network-Application
     hostname: unifi2
     domainname: lan
