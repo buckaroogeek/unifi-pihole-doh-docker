@@ -80,8 +80,8 @@ services:
   # v6 pihole - replica for nebula-sync
   # Uses original pihole v5 IP and domain name
   # dns_secret defined in compose.yaml
-  pihole:     # Pi Hole dns server for local network
-    container_name: pihole
+  pihole1:     # Pi Hole dns server for local network
+    container_name: pihole1
     image: pihole/pihole:latest
     hostname: pihole
     domainname: lan
