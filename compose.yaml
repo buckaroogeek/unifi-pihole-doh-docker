@@ -29,7 +29,7 @@ include:
 #  - ./services/homeassistant.yaml
   - ./services/forgejo.yaml
   - ./services/caddy.yaml
-  - ./services/unifi.yaml
+#  - ./services/unifi.yaml
 #  10 Feb 2025 - doh client replaced by pfsense and DOT
 #  - ./services/doh-client.yaml
   - ./services/smokeping.yaml
