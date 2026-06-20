@@ -80,32 +80,32 @@ services:
   # v6 pihole - replica for nebula-sync
   # Uses original pihole v5 IP and domain name
   # dns_secret defined in compose.yaml
-  pihole1:     # Pi Hole dns server for local network
-    container_name: pihole1
-    image: pihole/pihole:latest
-    hostname: pihole
-    domainname: lan
-    cap_add:
-      - NET_ADMIN
-      - SYS_TIME
-      - SYS_NICE
-      - NET_BIND_SERVICE
-    networks:
-      macvlan1:
-        ipv4_address: 192.168.110.201
-    volumes:
-      - '/volume1/docker/pihole/etc:/etc/pihole/'
-      - '/volume1/docker/pihole/dnsmasq:/etc/dnsmasq.d/'
-    ports:
-      - 443/tcp
-      - 53/tcp
-      - 53/udp
-      - 80/tcp
-    environment:
-      WEBPASSWORD_FILE: pihole_webpasswd
-      TZ: 'America/Los_Angeles'
-    secrets:
-      - pihole_webpasswd
-    restart: unless-stopped
-
+#  pihole1:     # Pi Hole dns server for local network
+#    container_name: pihole1
+#    image: pihole/pihole:latest
+#    hostname: pihole
+#    domainname: lan
+#    cap_add:
+#      - NET_ADMIN
+#      - SYS_TIME
+#      - SYS_NICE
+#      - NET_BIND_SERVICE
+#    networks:
+#      macvlan1:
+#        ipv4_address: 192.168.110.201
+#    volumes:
+#      - '/volume1/docker/pihole/etc:/etc/pihole/'
+#      - '/volume1/docker/pihole/dnsmasq:/etc/dnsmasq.d/'
+#    ports:
+#      - 443/tcp
+#      - 53/tcp
+#      - 53/udp
+#      - 80/tcp
+#    environment:
+#      WEBPASSWORD_FILE: pihole_webpasswd
+#      TZ: 'America/Los_Angeles'
+#    secrets:
+#      - pihole_webpasswd
+#    restart: unless-stopped
+#
 ...
